@@ -21,6 +21,9 @@ import id801 from "./801.svg";
 import id802 from "./802.svg";
 import id803 from "./803.svg";
 import id804 from "./804.svg";
+import pressure from "./icons/pressure.svg";
+import humidity from "./icons/humidity.svg";
+import wind from "./icons/wind.svg";
 
 const WeatherImgCollections = {
   id500,
@@ -48,4 +51,13 @@ const WeatherImgCollections = {
   id804,
 }
 
-export default WeatherImgCollections;
+const WeatherIcons = {
+  pressure,
+  humidity,
+  wind
+}
+
+export {
+  WeatherImgCollections,
+  WeatherIcons
+}

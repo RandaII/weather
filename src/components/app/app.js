@@ -6,6 +6,7 @@ import {fetchForecast, fetchCity} from "../../actions";
 
 import "./app.scss";
 import {bindActionCreators} from "redux";
+import WeatherTabs from "../weather-tabs";
 
 class App extends Component{
 
@@ -17,7 +18,7 @@ class App extends Component{
   searchFunc = async (city) => await this.props.fetchCity(city);
 
   componentDidMount() {
-
+    this.fetchWeatherForecast(this.props.city, `daily`);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -30,11 +31,20 @@ class App extends Component{
 
     const {city, weatherForecasts:{daily}} = this.props;
 
+    let test;
+
+    if (daily){
+      test = daily.slice(0);
+      test.length = 3;
+    }
+
+
     return (
       <>
         <Search submitFunc ={this.searchFunc}></Search>
+        {daily && <WeatherTabs values={test}/>}
         <section className="weather-cards">
-          {daily && <WeatherCard city={city} values={daily}/>}
+          {daily && <WeatherCard city={city} values={test}/>}
         </section>
       </>
     );

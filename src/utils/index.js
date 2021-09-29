@@ -2,49 +2,89 @@ const returnDayAndMonth = (seconds) =>{
   const date = new Date(seconds * 1000)
 
   let month;
+  let shortMonth;
+  let weekday;
 
   switch(date.getMonth() + 1){
     case 1:
-      month = `янв`;
+      shortMonth = `янв`;
+      month = `января`;
       break;
     case 2:
-      month = `фев`;
+      shortMonth = `фев`;
+      month = `февраля`;
       break;
     case 3:
+      shortMonth = `марта`;
       month = `марта`;
       break;
     case 4:
-      month = `апр`;
+      shortMonth = `апр`;
+      month = `апреля`;
       break;
     case 5:
+      shortMonth = `мая`;
       month = `мая`;
       break;
     case 6:
+      shortMonth = `июня`;
       month = `июня`;
       break;
     case 7:
+      shortMonth = `июля`;
       month = `июля`;
       break;
     case 8:
-      month = `авг`;
+      shortMonth = `авг`;
+      month = `августа`;
       break;
     case 9:
-      month = `сент`;
+      shortMonth = `сент`;
+      month = `сентября`;
       break;
     case 10:
-      month = `окт`;
+      shortMonth = `окт`;
+      month = `октября`;
       break;
     case 11:
-      month = `нояб`;
+      shortMonth = `нояб`;
+      month = `ноября`;
       break;
     case 12:
-      month = `дек`;
+      shortMonth = `дек`;
+      month = `декабря`;
+      break;
+  }
+
+  switch (date.getDay()) {
+    case 0:
+      weekday = `воскресение`;
+      break;
+    case 1:
+      weekday = `понедельник`;
+      break;
+    case 2:
+      weekday = `вторник`;
+      break;
+    case 3:
+      weekday = `среда`;
+      break;
+    case 4:
+      weekday = `четверг`;
+      break;
+    case 5:
+      weekday = `пятница`;
+      break;
+    case 6:
+      weekday = `суббота`;
       break;
   }
 
   return{
     day: date.getDate(),
-    month
+    month,
+    shortMonth,
+    weekday
   }
 }
 
@@ -62,7 +102,11 @@ const returnTemperature = (number) =>{
   }
 }
 
+const returnAtmospherePressure = (seaLevel) => Math.round(seaLevel / 1.36);
+
+
 export {
   returnDayAndMonth,
-  returnTemperature
+  returnTemperature,
+  returnAtmospherePressure
 }

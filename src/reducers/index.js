@@ -5,7 +5,7 @@ const initialState = {
   weatherForecasts: {
     daily: null
   },
-  city: null
+  city: `Барнаул`
 }
 
 const reducer = (state = initialState, action) =>{

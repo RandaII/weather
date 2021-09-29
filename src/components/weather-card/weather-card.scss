@@ -14,6 +14,23 @@
   box-shadow: $shadow;
   color: $mainFontColor;
 
+  &.one-day {
+    max-width: 185px;
+    width: 100%;
+
+    & .weather-card__date {
+      font-size: 32px;
+      font-weight: 300;
+      width: auto;
+      margin: 0;
+    }
+
+    & .weather-card__temperature {
+      font-size: 36px;
+      line-height: 40px;
+    }
+  }
+
 
   &__row{
     display: flex;
@@ -61,7 +78,6 @@
     box-sizing: border-box;
     font-size: 14px;
     align-self: baseline;
-    padding-left: 3px;
     text-align: center;
   }
 
@@ -75,4 +91,102 @@
     height: 55px;
     width: auto;
   }
+}
+
+.weather-card--extended{
+  width: auto;
+  background-color: #fff;
+  height: auto;
+  margin-top: 15px;
+  border-radius: $bdRadius;
+  font-family: $mainFont;
+  padding: 15px;
+  box-sizing: border-box;
+  color: $mainFontColor;
+
+  &__row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__row.pd{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  &__row.jcl{
+    justify-content: left;
+    align-items: center;
+  }
+
+  &__row-item{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 145px;
+  }
+
+  &__city{
+    font-size: 36px;
+    font-weight: 300;
+  }
+
+  &__date{
+    font-size: 24px;
+    font-weight: 300;
+    margin: 0;
+    margin-left: 40px;
+    align-self: center;
+    text-align: center;
+  }
+
+  &__characteristic-icon{
+    max-width: 35px;
+  }
+
+  &__time-of-day{
+    margin: 0;
+    font-size: 32px;
+    font-weight: 300;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  &__temperature{
+    font-size: 32px;
+    font-weight: 400;
+    text-align: center;
+    margin: 0;
+    margin-top: 10px;
+  }
+
+  &__icon{
+    height: 70px;
+    width: auto;
+  }
+
+  &__feelings{
+    font-size: 18px;
+    font-weight: 300;
+    margin-top: 10px;
+    margin-bottom: 0px;
+  }
+
+  &__fact{
+    font-size: 24px;
+    font-weight: 300;
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    &:first-letter{
+      text-transform: uppercase;
+    }
+  }
+
+  &__facts{
+    margin-top: 10px;
+  }
+
 }
