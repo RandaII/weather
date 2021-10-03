@@ -1,5 +1,5 @@
 import React from "react";
-import {returnDayAndMonth, returnTemperature} from "../../utils";
+import {returnDetailedDate, returnTemperature} from "../../utils";
 import {WeatherImgCollections} from "../weather-card/img";
 
 import "./weather-tabs.scss";
@@ -8,7 +8,7 @@ const WeatherTabs = ({values}) =>{
 
   const threeDays = values.map(({dt, temp, weather}, id) => {
 
-    const date = returnDayAndMonth(dt);
+    const date = returnDetailedDate(dt);
     const dayTemp = returnTemperature(temp.day);
     const nightTemp = returnTemperature(temp.night);
     const description = weather[0].description;

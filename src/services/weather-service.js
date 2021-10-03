@@ -12,6 +12,14 @@ export default class WeatherService {
       .then((data) => data[forecastType]);
   }
 
+  fetchOneCallForecast = async (city) =>{
+    const coord = await this.fetchCityCoordinates(city);
+    const path = this.weatherPath + `&lat=${coord.lat}&lon=${coord.lon}`
+    return await fetch(path)
+      .then((result) => result.json())
+      .then((data) => data);
+  }
+
   fetchCityCoordinates = async (city) =>{
     return await fetch(this.currentWeatherPath + `&q=${city}`)
       .then((result) => result.json())

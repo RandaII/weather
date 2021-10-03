@@ -1,28 +1,58 @@
 import React from "react";
 
 import "./weather-card.scss";
-import {returnDayAndMonth, returnTemperature,returnAtmospherePressure} from "../../utils";
+import {
+  returnBackground,
+  returnConvertedWeatherInfo
+} from "../../utils";
 import {WeatherImgCollections, WeatherIcons} from "./img";
 
-const WeatherCard = ({city, values}) => {
-  return (<>{oneDayTemplate(values, city)}</>);
+const WeatherCard = ({city, values, timezoneOffset}) => {
+  return currentTemplate(values, city, timezoneOffset);
 }
 
-const oneDayTemplate = (values, city) =>{
+const currentTemplate = (value, city, timezoneOffset) => {
 
-  const testValue = values[0];
-  const date = returnDayAndMonth(testValue.dt);
-  const morning = returnTemperature(testValue.temp.morn)
-  const day = returnTemperature(testValue.temp.day)
-  const night = returnTemperature(testValue.temp.night)
-  const feelMorning = returnTemperature(testValue.feels_like.morn);
-  const feelDay = returnTemperature(testValue.feels_like.day);
-  const feelNight = returnTemperature(testValue.feels_like.night);
-  const description = testValue.weather[0].description;
-  const iconId = testValue.weather[0].id
-  const windSpeed = testValue.wind_speed.toFixed(1);
-  const humidity = testValue.humidity;
-  const pressure = returnAtmospherePressure(testValue.pressure);
+  const {date, timeOfDay, sunriseTime, sunsetTime, temp, feelingTemp, description, windSpeed, windDirection, pressure, humidity, weatherId} = returnConvertedWeatherInfo(value, timezoneOffset);
+
+  const backgroundStyle = {
+    backgroundImage: returnBackground(weatherId, timeOfDay)
+  };
+
+  return (
+    <div className="weather-card--current" style={backgroundStyle}>
+      <p className="weather-card--current__city">{city}</p>
+      <p className="weather-card--current__date">{`${date.day} ${date.month}, ${date.hours}:${date.minutes}`}</p>
+      <div className="weather-card--current__row">
+        <span className="weather-card--current__sunrise">{`восход ${sunriseTime.hours}:${sunriseTime.minutes}`}</span>
+        <span className="weather-card--current__temperature">{temp}</span>
+        <span className="weather-card--current__sunset">{`закат ${sunsetTime.hours}:${sunsetTime.minutes}`}</span>
+      </div>
+      <p className="weather-card--current__feeling">по ощущению {feelingTemp}</p>
+      <p className="weather-card--current__description">{description}</p>
+
+      <div className="weather-card--current__row">
+        <div className="weather-card--current__fact">
+          <div className="weather-card--current__icon wind"></div>
+          <span>{windSpeed} м/с, {windDirection.short}</span>
+        </div>
+        <div className="weather-card--current__fact">
+          <div className="weather-card--current__icon humidity"></div>
+          <span>{humidity}%</span>
+        </div>
+        <div className="weather-card--current__fact">
+          <div className="weather-card--current__icon pressure"></div>
+          <span>{pressure} мм рт. ст.</span>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+const oneDayTemplate = (value, city, timezoneOffset) => {
+
+  const {date, temp, feelingTemp, description, weatherId, windSpeed, windDirection, humidity, pressure} = returnConvertedWeatherInfo(value, timezoneOffset);
 
   return (
     <div className="weather-card--extended">
@@ -36,17 +66,17 @@ const oneDayTemplate = (values, city) =>{
 
         <div className="weather-card--extended__row-item">
           <p className="weather-card--extended__time-of-day">Утром</p>
-          <p className="weather-card--extended__temperature">{morning}</p>
+          <p className="weather-card--extended__temperature">{temp.morn}</p>
         </div>
 
         <div className="weather-card--extended__row-item">
           <p className="weather-card--extended__time-of-day">Днем</p>
-          <p className="weather-card--extended__temperature">{day}</p>
+          <p className="weather-card--extended__temperature">{temp.day}</p>
         </div>
 
         <div className="weather-card--extended__row-item">
           <p className="weather-card--extended__time-of-day">Ночью</p>
-          <p className="weather-card--extended__temperature">{night}</p>
+          <p className="weather-card--extended__temperature">{temp.night}</p>
         </div>
 
       </div>
@@ -58,16 +88,16 @@ const oneDayTemplate = (values, city) =>{
       <div className="weather-card--extended__row pd">
 
         <div className="weather-card--extended__row-item">
-          <p className="weather-card--extended__temperature">{feelMorning}</p>
+          <p className="weather-card--extended__temperature">{feelingTemp.morn}</p>
         </div>
 
         <div className="weather-card--extended__row-item">
-          <p className="weather-card--extended__temperature">{feelDay}</p>
+          <p className="weather-card--extended__temperature">{feelingTemp.day}</p>
 
         </div>
 
         <div className="weather-card--extended__row-item">
-          <p className="weather-card--extended__temperature">{feelNight}</p>
+          <p className="weather-card--extended__temperature">{feelingTemp.night}</p>
         </div>
 
       </div>
@@ -75,13 +105,14 @@ const oneDayTemplate = (values, city) =>{
       <div className="weather-card--extended__facts">
 
         <div className="weather-card--extended__row jcl">
-          <img src={WeatherImgCollections[`id${iconId}`]} alt="" className="weather-card--extended__characteristic-icon"/>
+          <img src={WeatherImgCollections[`id${weatherId}`]} alt=""
+               className="weather-card--extended__characteristic-icon"/>
           <p className="weather-card--extended__fact">{description}</p>
         </div>
 
         <div className="weather-card--extended__row jcl">
           <img src={WeatherIcons.wind} alt="" className="weather-card--extended__characteristic-icon"/>
-          <p className="weather-card--extended__fact">Скорость ветра {windSpeed} м/с</p>
+          <p className="weather-card--extended__fact">Скорость ветра {windSpeed} м/с {windDirection.short}</p>
         </div>
         <div className="weather-card--extended__row jcl">
           <img src={WeatherIcons.humidity} alt="" className="weather-card--extended__characteristic-icon"/>
@@ -98,17 +129,14 @@ const oneDayTemplate = (values, city) =>{
   );
 }
 
-const sevenDaysTemplate = (values, city) =>{
+const sevenDaysTemplate = (values, city, timezoneOffset) => {
+  return values.map((value, id) => {
 
-  return values.map(({dt, temp, weather}, id) =>{
-    const date = returnDayAndMonth(dt);
-    const dayTemp = returnTemperature(temp.day);
-    const nightTemp = returnTemperature(temp.night);
-    const description = weather[0].description;
+    const {date, temp, description, weatherId} = returnConvertedWeatherInfo(value, timezoneOffset);
 
-    const img = WeatherImgCollections[`id${weather[0].id}`];
+    const img = WeatherImgCollections[`id${weatherId}`];
 
-    return(
+    return (
       <div className="weather-card" key={id}>
         <div className="weather-card__row">
           <p className="weather-card__city">{city}</p>
@@ -119,8 +147,8 @@ const sevenDaysTemplate = (values, city) =>{
         </div>
         <div className="weather-card__row">
           <div>
-            <p className="weather-card__temperature">{dayTemp}</p>
-            <p className="weather-card__temperature">{nightTemp}</p>
+            <p className="weather-card__temperature">{temp.day}</p>
+            <p className="weather-card__temperature">{temp.night}</p>
           </div>
           <img src={img} alt={description} className="weather-card__icon"/>
         </div>

@@ -11,40 +11,48 @@ import WeatherTabs from "../weather-tabs";
 class App extends Component{
 
   fetchWeatherForecast = async (city, forecastType) =>{
-    const forecast = await this.props.WeatherService.fetchForecast(city, forecastType)
-    await this.props.fetchForecast({[forecastType]: forecast});
+    // const forecast = await this.props.WeatherService.fetchForecast(city, forecastType)
+    const forecast = await this.props.WeatherService.fetchOneCallForecast(city)
+    await this.props.fetchForecast(forecast);
+    // await this.props.fetchForecast({[forecastType]: forecast});
   }
 
   searchFunc = async (city) => await this.props.fetchCity(city);
 
   componentDidMount() {
-    this.fetchWeatherForecast(this.props.city, `daily`);
+     this.fetchWeatherForecast(this.props.city, `current`);
+     // this.fetchWeatherForecast(this.props.city, `daily`);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.city !== this.props.city){
-      this.fetchWeatherForecast(this.props.city, `daily`);
+      this.fetchWeatherForecast(this.props.city, `current`);
     }
   }
 
   render() {
 
-    const {city, weatherForecasts:{daily}} = this.props;
+    const {city, weatherForecasts:{daily, current, timezone_offset}} = this.props;
 
     let test;
 
-    if (daily){
-      test = daily.slice(0);
-      test.length = 3;
-    }
+    // if (daily){
+    //   test = daily.slice(0);
+    //   test.length = 3;
+    // }
+
+    // if (current){
+    //   test = daily;
+    // }
 
 
     return (
       <>
         <Search submitFunc ={this.searchFunc}></Search>
-        {daily && <WeatherTabs values={test}/>}
+        {/*{daily && <WeatherTabs values={test}/>}*/}
         <section className="weather-cards">
-          {daily && <WeatherCard city={city} values={test}/>}
+          {current && <WeatherCard city={city} values={current} timezoneOffset={timezone_offset}/>}
+          {/*{daily && <WeatherCard city={city} values={daily}/>}*/}
         </section>
       </>
     );

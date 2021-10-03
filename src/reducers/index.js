@@ -15,6 +15,7 @@ const reducer = (state = initialState, action) =>{
       return {
         ...state,
         weatherForecasts: {
+          ...state.weatherForecasts,
           ...action.payload
         }
       }

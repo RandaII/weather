@@ -190,3 +190,95 @@
   }
 
 }
+
+.weather-card--current{
+  font-family: $mainFont;
+  color: #fff;
+  border-radius: 5px;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  width: 100%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-top: 20px;
+
+  span, p{
+    text-shadow: 1px 1px 2px black;
+  }
+
+  &__city{
+    font-size: 36px;
+    font-weight: 300;
+    text-align: center;
+    margin: 0;
+  }
+
+  &__date{
+    font-size: 20px;
+    font-weight: 300;
+    text-align: center;
+    margin: 0;
+    margin-top: 5px;
+  }
+
+  &__temperature{
+    font-size: 64px;
+    font-weight: 300;
+  }
+
+  &__row{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+
+  &__sunrise, &__sunset{
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  &__feeling{
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__description{
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0;
+    margin-top: 5px;
+    text-align: center;
+  }
+
+
+  &__fact{
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+
+    span{
+      font-size: 18px;
+      margin-left: 7px;
+    }
+  }
+
+  &__icon{
+    height: 35px;
+    width: 35px;
+    background-color: #fff;
+
+    &.wind{
+      mask-image: url("./img/icons/wind.svg");
+    }
+    &.humidity{
+      mask-image: url("./img/icons/humidity.svg");
+    }
+    &.pressure{
+      mask-image: url("./img/icons/pressure.svg");
+    }
+  }
+}
