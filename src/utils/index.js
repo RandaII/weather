@@ -5,7 +5,15 @@ const returnLocalTimeMs = (seconds, timeZoneOffsetSeconds) =>{
 }
 
 const returnDetailedDate = (seconds, timeZoneOffsetSeconds) =>{
-  let date = new Date(returnLocalTimeMs(seconds, timeZoneOffsetSeconds));
+
+  let date;
+
+  if (timeZoneOffsetSeconds){
+    date = new Date(returnLocalTimeMs(seconds, timeZoneOffsetSeconds));
+  }
+  else {
+    date = new Date(seconds * 1000);
+  }
 
   let month;
   let shortMonth;
@@ -184,7 +192,7 @@ const returnBackground = (id, timesOfDay) =>{
     } ;
   }
 
-  return `url(./backgrounds/${timesOfDay}/${bgcPath[timesOfDay]})`;
+  return `url(/backgrounds/${timesOfDay}/${bgcPath[timesOfDay]})`;
 }
 
 const returnConvertedWeatherInfo = (value, timezoneOffset) =>{
@@ -226,6 +234,34 @@ const returnConvertedWeatherInfo = (value, timezoneOffset) =>{
   }
 }
 
+const returnTabId = (activeTabId) => Number(activeTabId.slice(0,1)) - 1;
+
+const returnStructuredPath = (path) => {
+  const regExp = /^(\/(?<structuredPathCity>[а-яА-Яa-zA-Z-]+)\/)(?<structuredPathParameter>[a-z0-9-]+)|^\/(?<singleCity>[а-яА-Яa-zA-Z-]+)\/?/gm;
+  let result = [...path.matchAll(regExp)];
+
+  if (result.length > 0) {
+    const {structuredPathCity, structuredPathParameter, singleCity} = result[0].groups;
+
+    if (structuredPathCity && structuredPathParameter) {
+      return {
+        city: structuredPathCity,
+        parameter: structuredPathParameter
+      }
+    }
+    if (singleCity) {
+      return {
+        city: singleCity,
+        parameter: ``
+      };
+    }
+  }
+  return {
+    city: ``,
+    parameter: ``
+  };
+}
+
 export {
   returnDetailedDate,
   returnTemperature,
@@ -234,5 +270,7 @@ export {
   returnTimeOfDay,
   returnBackground,
   returnConvertedWeatherInfo,
-  returnLocalTimeMs
+  returnLocalTimeMs,
+  returnTabId,
+  returnStructuredPath
 }

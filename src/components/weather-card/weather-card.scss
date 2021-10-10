@@ -45,6 +45,7 @@
   &__city{
     font-size: 24px;
     font-weight: 300;
+    text-transform: capitalize;
     margin: 0;
 
     &:first-letter{
@@ -130,6 +131,7 @@
   &__city{
     font-size: 36px;
     font-weight: 300;
+    text-transform: capitalize;
   }
 
   &__date{
@@ -211,6 +213,7 @@
   &__city{
     font-size: 36px;
     font-weight: 300;
+    text-transform: capitalize;
     text-align: center;
     margin: 0;
   }

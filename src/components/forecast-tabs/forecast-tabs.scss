@@ -1,0 +1,42 @@
+@import "../../styles/variables";
+
+.forecast-tabs {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 15px;
+}
+
+.forecast-tab {
+
+  &:first-child a{
+    border-radius: $bdRadius 0 0 $bdRadius;
+  }
+
+  &:last-child a{
+    border-radius: 0 $bdRadius $bdRadius 0;
+    border-right: none;
+  }
+
+  a {
+    font-family: $mainFont;
+    font-weight: 300;
+    font-size: 20px;
+    text-decoration: none;
+    color: #3156b5;
+    line-height: 60px;
+    display: block;
+    text-align: center;
+    height: 60px;
+    width: 100px;
+    background-color: #fff;
+    box-sizing: border-box;
+    border-right: 1px solid #3156b5;
+
+    &.active {
+      background-color: #3156b5;
+      color: white;
+    }
+  }
+}

@@ -13,7 +13,15 @@ const fetchCity = (payload) =>{
   }
 }
 
+const setActiveWeatherTab = (payload) =>{
+  return {
+    type: `SET_ACTIVE_WEATHER_TAB`,
+    payload
+  }
+}
+
 export {
   fetchForecast,
-  fetchCity
+  fetchCity,
+  setActiveWeatherTab
 }

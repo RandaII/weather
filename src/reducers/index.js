@@ -5,7 +5,8 @@ const initialState = {
   weatherForecasts: {
     daily: null
   },
-  city: `Барнаул`
+  city: `Барнаул`,
+  activeWeatherTab: null
 }
 
 const reducer = (state = initialState, action) =>{
@@ -23,6 +24,11 @@ const reducer = (state = initialState, action) =>{
       return {
         ...state,
         city: action.payload
+      }
+    case  `SET_ACTIVE_WEATHER_TAB`:
+      return {
+        ...state,
+        activeWeatherTab: action.payload
       }
 
     default:
