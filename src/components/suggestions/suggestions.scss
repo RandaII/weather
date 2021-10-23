@@ -1,0 +1,37 @@
+@import "../../styles/variables";
+
+.suggestions{
+  background-color: #ffffff;
+  box-sizing: border-box;
+  max-width: 500px;
+  width: 100%;
+  margin-top: 5px;
+  border-radius: $bdRadius;
+  position: absolute;
+  box-shadow: $shadow;
+}
+.suggestion{
+  font-family: $mainFont;
+  font-size: 16px;
+  font-weight: 300;
+  color: #211c1c;
+  border-bottom: 1px solid #566B80;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  letter-spacing: .3px;
+  text-decoration: none;
+
+  &:visited{
+    color: #211c1c;
+  }
+  &__city{
+    color: #3156b5;
+    font-weight: 400;
+    margin-right: 7px;
+  }
+
+  &__region{
+    font-size: 15px;
+  }
+}

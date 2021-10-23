@@ -1,12 +1,15 @@
 import WeatherService from "../services/weather-service";
+import CityService from "../services/city-service";
 
 const initialState = {
   WeatherService: new WeatherService(),
+  CityService: new CityService(),
   weatherForecasts: {
     daily: null
   },
   city: `Барнаул`,
-  activeWeatherTab: null
+  searchInput: ``,
+  searchInputStatus: false
 }
 
 const reducer = (state = initialState, action) =>{
@@ -25,10 +28,20 @@ const reducer = (state = initialState, action) =>{
         ...state,
         city: action.payload
       }
-    case  `SET_ACTIVE_WEATHER_TAB`:
+    case `FETCH_SUGGESTIONS`:
       return {
         ...state,
-        activeWeatherTab: action.payload
+        suggestions: action.payload
+      }
+    case `FETCH_SEARCH_INPUT_VALUE`:
+      return {
+        ...state,
+        searchInput: action.payload
+      }
+    case `FETCH_SEARCH_INPUT_STATUS`:
+      return {
+        ...state,
+        searchInputStatus: action.payload
       }
 
     default:

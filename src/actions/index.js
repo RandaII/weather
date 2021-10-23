@@ -13,9 +13,22 @@ const fetchCity = (payload) =>{
   }
 }
 
-const setActiveWeatherTab = (payload) =>{
+const fetchSuggestions = (payload) =>{
   return {
-    type: `SET_ACTIVE_WEATHER_TAB`,
+    type: `FETCH_SUGGESTIONS`,
+    payload
+  }
+}
+const fetchSearchInputValue = (payload) =>{
+  return {
+    type: `FETCH_SEARCH_INPUT_VALUE`,
+    payload
+  }
+}
+
+const fetchSearchInputStatus = (payload) =>{
+  return {
+    type: `FETCH_SEARCH_INPUT_STATUS`,
     payload
   }
 }
@@ -23,5 +36,7 @@ const setActiveWeatherTab = (payload) =>{
 export {
   fetchForecast,
   fetchCity,
-  setActiveWeatherTab
+  fetchSuggestions,
+  fetchSearchInputValue,
+  fetchSearchInputStatus
 }

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import Search from "../search";
 import WeatherCard from "../weather-card";
 import {connect} from "react-redux";
-import {fetchForecast, fetchCity} from "../../actions";
+import {fetchForecast, fetchCity, fetchSuggestions, fetchSearchInputStatus} from "../../actions";
 
 import "./app.scss";
 import {bindActionCreators} from "redux";
@@ -10,6 +10,7 @@ import WeatherTabs from "../weather-tabs";
 import ForecastTabs from "../forecast-tabs";
 import {Route, withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
+import Suggestions from "../suggestions";
 
 class App extends Component {
 
@@ -24,14 +25,54 @@ class App extends Component {
     this.props.history.push(`/${city}/${pathRest}`);
   }
 
-
   async componentDidMount() {
     const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
+    document.addEventListener(`click`, this.inputFocus);
 
     if (pathCity) {
       await this.props.fetchCity(pathCity);
       this.fetchWeatherForecast(this.props.city);
       return;
+    }
+  }
+
+  returnSuggestions = async (string) => {
+    string = string.toLowerCase();
+    let {suggestions} = await this.props.CityService.fetchCityPrompt(string);
+
+    suggestions = suggestions.filter(({data:{city}}) => {
+      if (city) {
+        city = city.toLowerCase();
+        if (city.includes(string)) {
+          return true
+        }
+        return false;
+      }
+    }).map(({data: {city, region_with_type, country}}) => {
+      return {
+        city,
+        region_with_type,
+        country
+      }
+    });
+
+    for (let i = 0; i < suggestions.length; i++) {
+      for (let j = i + 1; j < suggestions.length; j++) {
+        if (suggestions[i].city === suggestions[j].city) {
+          suggestions.splice(j, 1);
+        }
+      }
+    }
+    if (suggestions.length > 10){
+      suggestions.length = 10;
+    }
+
+    await this.props.fetchSuggestions(suggestions);
+  }
+
+  inputFocus = ({target}) =>{
+    if (!target.hasAttribute(`data-suggestion`) && !target.hasAttribute(`data-search`) && this.props.searchInputStatus){
+      this.props.fetchSearchInputStatus(false);
     }
   }
 
@@ -43,13 +84,17 @@ class App extends Component {
       await this.props.fetchCity(pathCity);
       this.fetchWeatherForecast(pathCity);
     }
+    if (prevProps.searchInput !== this.props.searchInput) {
+      this.returnSuggestions(this.props.searchInput);
+    }
   }
 
   render() {
 
-    const {city, weatherForecasts: {daily, current}} = this.props;
+    const {city, weatherForecasts: {daily, current}, suggestions, searchInputStatus} = this.props;
 
     let routes;
+    let suggestionsBlock;
 
     if (daily && current && city) {
       routes = (
@@ -96,10 +141,20 @@ class App extends Component {
         </>
       );
     }
+
+    if (suggestions && searchInputStatus){
+      suggestionsBlock = <Suggestions suggestionsArr={suggestions}/>
+    }
+
     return (
       <>
         <Route path={`/`} render={() => {
-          return (<Search submitFunc={this.searchFunc}/>);
+          return (
+            <>
+              <Search submitFunc={this.searchFunc} changeFunc={this.returnSuggestions}/>
+              {suggestionsBlock}
+              </>
+            );
         }}/>
         {routes}
       </>
@@ -110,7 +165,9 @@ class App extends Component {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     fetchForecast,
-    fetchCity
+    fetchCity,
+    fetchSuggestions,
+    fetchSearchInputStatus
   }, dispatch);
 }
 
