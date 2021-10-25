@@ -11,6 +11,7 @@ import ForecastTabs from "../forecast-tabs";
 import {Route, withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
 import Suggestions from "../suggestions";
+import WeatherService from "../../services/weather-service";
 
 class App extends Component {
 
@@ -26,6 +27,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
+
     const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
     document.addEventListener(`click`, this.inputFocus);
 
@@ -49,25 +51,40 @@ class App extends Component {
         return false;
       }
     }).map(({data: {city, region_with_type, country}}) => {
-      return {
+       return {
         city,
         region_with_type,
         country
       }
     });
 
+    let newSuggestions = [];
     for (let i = 0; i < suggestions.length; i++) {
-      for (let j = i + 1; j < suggestions.length; j++) {
-        if (suggestions[i].city === suggestions[j].city) {
-          suggestions.splice(j, 1);
+      if (i === 0){
+        newSuggestions.push(suggestions[i])
+      }
+      else {
+        for (let j = 0; j < newSuggestions.length; j++){
+          if (j === newSuggestions.length - 1){
+            if (suggestions[i].city !== newSuggestions[j].city){
+              newSuggestions.push(suggestions[i]);
+            }
+          }
+          else if (suggestions[i].city === newSuggestions[j].city){
+            break;
+          }
+          else {
+            continue;
+          }
         }
       }
     }
-    if (suggestions.length > 10){
-      suggestions.length = 10;
+
+    if (newSuggestions.length > 10){
+      newSuggestions.length = 10;
     }
 
-    await this.props.fetchSuggestions(suggestions);
+    await this.props.fetchSuggestions(newSuggestions);
   }
 
   inputFocus = ({target}) =>{

@@ -738,13 +738,6 @@ export default class WeatherService {
       .then((data) => data[forecastType]);
   }
 
-  // fetchOneCallForecast = async (city) => {
-  //   return await new Promise((resolve) =>{
-  //     console.log(`ss`);
-  //     resolve(testResponse[city])
-  //   });
-  // }
-
   fetchOneCallForecast = async (city) => {
     const coord = await this.fetchCityCoordinates(city);
     const path = this.weatherPath + `&lat=${coord.lat}&lon=${coord.lon}`
