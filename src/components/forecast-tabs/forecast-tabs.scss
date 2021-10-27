@@ -1,14 +1,16 @@
 @import "../../styles/variables";
 
 .forecast-tabs {
-  display: flex;
+  display: inline-block;
   list-style: none;
   padding: 0;
   margin: 0;
   margin-top: 15px;
+  box-shadow: $shadow;
 }
 
 .forecast-tab {
+  display: inline-block;
 
   &:first-child a{
     border-radius: $bdRadius 0 0 $bdRadius;
@@ -24,19 +26,38 @@
     font-weight: 300;
     font-size: 20px;
     text-decoration: none;
-    color: #3156b5;
+    color: $accentColor;
     line-height: 60px;
-    display: block;
+    display: inline-block;
     text-align: center;
     height: 60px;
     width: 100px;
     background-color: #fff;
     box-sizing: border-box;
-    border-right: 1px solid #3156b5;
+    border: 1px solid #ffffff;
+    border-right: 1px solid $accentColor;
+    transition: .1s ease-in-out;
 
     &.active {
-      background-color: #3156b5;
+      background-color: $accentColor;
+      border: 1px solid $accentColor;
       color: white;
+
+      &:hover{
+        background-color: $accentColor;
+        border: 1px solid $accentColor;
+      }
+      &:focus{
+        background-color: $accentColor;
+        outline: none;
+        border: 1px solid #ffffff;
+      }
     }
+  }
+  a:hover, a:focus{
+    background-color: $lightAccentColor;
+    color: white;
+    border: 1px solid $lightAccentColor;
+    outline: none;
   }
 }

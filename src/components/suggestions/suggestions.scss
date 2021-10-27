@@ -1,17 +1,17 @@
 @import "../../styles/variables";
 
 .suggestions{
-  background-color: #ffffff;
   box-sizing: border-box;
   max-width: 500px;
   width: 100%;
   margin-top: 5px;
-  border-radius: $bdRadius;
   position: absolute;
   box-shadow: $shadow;
+  z-index: 100;
 }
 .suggestion{
   font-family: $mainFont;
+  background-color: #ffffff;
   font-size: 16px;
   font-weight: 300;
   color: #211c1c;
@@ -21,6 +21,25 @@
   align-items: center;
   letter-spacing: .3px;
   text-decoration: none;
+
+  &:first-child{
+    border-radius: $bdRadius $bdRadius 0 0;
+  }
+  &:last-child{
+    border-radius: 0 0 $bdRadius $bdRadius ;
+    border-bottom: none;
+  }
+
+  &:hover, &:focus{
+    background-color: $accentColor;
+    outline: none;
+    .suggestion__city{
+      color: #ffffff;
+    }
+    .suggestion__region{
+      color: #ffffff;
+    }
+  }
 
   &:visited{
     color: #211c1c;

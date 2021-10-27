@@ -2,7 +2,6 @@
 
 .search{
   max-width: 400px;
-  width: 100%;
 
   &__form{
     width: 100%;
@@ -20,9 +19,14 @@
     height: 50px;
     box-sizing: border-box;
     padding-left: 10px;
-    border: none;
+    border: 1px solid #fff;
     outline: none;
     border-radius: $bdRadius 0 0 $bdRadius;
+    transition: .1s ease-out;
+
+    &:hover, &:focus{
+      border: 1px solid $accentColor;
+    }
   }
   &__button{
     font-family: $mainFont;
@@ -32,11 +36,20 @@
     max-width: 100px;
     width: 100%;
     box-sizing: border-box;
-    background-color: #3156b5;
+    background-color: $accentColor;
     color: #ffffff;
     border: none;
     border-radius: 0 $bdRadius $bdRadius 0;
     padding: 0;
     cursor: pointer;
+    transition: $transition;
+
+    &:hover{
+      background-color: $lightAccentColor;
+    }
+    &:focus{
+      background-color: $lightAccentColor;
+      outline: none;
+    }
   }
 }

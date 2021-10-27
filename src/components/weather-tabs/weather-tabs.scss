@@ -17,14 +17,30 @@
   color: $mainFontColor;
   box-sizing: border-box;
   text-decoration: none;
+  transition: .1s ease-out;
+
+  &:hover{
+    background-color: $lightAccentColor;
+    color: #fff;
+  }
+
+  &:focus{
+    background-color: $lightAccentColor;
+    outline: none;
+    color: #fff;
+  }
 
   &.active{
     background-color: #3156b5;
     color: #fff;
+
+    &:focus{
+      outline: 1px solid #000000;
+    }
   }
 
   & .weather-tab__date {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 300;
     width: auto;
     margin: 0;
@@ -37,7 +53,7 @@
   }
 
   & .weather-tab__temperature {
-    font-size: 36px;
+    font-size: 32px;
     line-height: 40px;
     margin: 0;
   }

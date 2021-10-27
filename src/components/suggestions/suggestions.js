@@ -2,11 +2,15 @@ import React from "react";
 import {NavLink} from "react-router-dom";
 import {connect} from "react-redux";
 import {fetchSearchInputStatus, fetchSearchInputValue} from "../../actions";
+import {withRouter} from "react-router-dom";
+import {returnStructuredPath} from "../../utils";
 
 import "./suggestions.scss";
 import {bindActionCreators} from "redux";
 
-const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputValue}) =>{
+const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputValue, history}) =>{
+
+  const {parameter} = returnStructuredPath(history.location.pathname);
 
   suggestionsArr = suggestionsArr.map(({city, country, region_with_type}, id) =>{
 
@@ -15,8 +19,10 @@ const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputVa
       fetchSearchInputValue(city);
     }
 
+    let path = (parameter !== ``) ? `/${city}/${parameter}`: `/${city}`;
+
     return (
-      <NavLink className="suggestion" to={`/${city}`} data-suggestion key={id} exact onClick={clickFunc}>
+      <NavLink className="suggestion" to={path} data-suggestion key={id} exact onClick={clickFunc}>
         <span className="suggestion__city" data-suggestion>{city}</span> <span className="suggestion__region" data-suggestion>{`${region_with_type}, ${country}`}</span>
       </NavLink>
     );
@@ -38,4 +44,4 @@ const mapDispatchToProps = (dispatch) =>{
   }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Suggestions);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Suggestions));

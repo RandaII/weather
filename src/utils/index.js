@@ -184,6 +184,14 @@ const returnBackground = (id, timesOfDay) =>{
     } ;
   }
 
+  // snowy weather
+  if (id >= 600 && id <=622){
+    bgcPath = {
+      day: `d_s.jpg`,
+      night: `n_s.jpg`
+    } ;
+  }
+
   //clear weather
   if (id === 800){
     bgcPath = {
@@ -215,7 +223,7 @@ const returnConvertedWeatherInfo = (value, timezoneOffset) =>{
   }
   else if (typeof temp === `number` && typeof feels_like === `number`){
     convertedTemp = returnTemperature(temp, 1);
-    convertedFeelingTemp = returnTemperature(temp);
+    convertedFeelingTemp = returnTemperature(feels_like);
   }
 
   return {

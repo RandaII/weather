@@ -31,7 +31,6 @@
     }
   }
 
-
   &__row{
     display: flex;
     align-items: center;
@@ -95,15 +94,16 @@
 }
 
 .weather-card--extended{
-  width: auto;
-  background-color: #fff;
-  height: auto;
-  margin-top: 15px;
-  border-radius: $bdRadius;
   font-family: $mainFont;
+  width: auto;
+  height: auto;
+  color: $mainFontColor;
+  background-color: #fff;
+  border-radius: $bdRadius;
+  margin-top: 15px;
   padding: 15px;
   box-sizing: border-box;
-  color: $mainFontColor;
+  box-shadow: $shadow;
 
   &__row{
     display: flex;
@@ -148,9 +148,9 @@
   }
 
   &__time-of-day{
-    margin: 0;
     font-size: 32px;
     font-weight: 300;
+    margin: 0;
     margin-top: 10px;
     text-align: center;
   }
@@ -196,7 +196,7 @@
 .weather-card--current{
   font-family: $mainFont;
   color: #fff;
-  border-radius: 5px;
+  border-radius: $bdRadius;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
@@ -205,6 +205,7 @@
   padding-top: 15px;
   padding-bottom: 15px;
   margin-top: 20px;
+  box-shadow: $shadow;
 
   span, p{
     text-shadow: 1px 1px 2px black;
