@@ -245,7 +245,8 @@ const returnConvertedWeatherInfo = (value, timezoneOffset) =>{
 const returnTabId = (activeTabId) => Number(activeTabId.slice(0,1)) - 1;
 
 const returnStructuredPath = (path) => {
-  const regExp = /^(\/(?<structuredPathCity>[а-яА-Яa-zA-Z-]+)\/)(?<structuredPathParameter>[a-z0-9-]+)|^\/(?<singleCity>[а-яА-Яa-zA-Z-]+)\/?/gm;
+  const regExp = /^(\/(?<structuredPathCity>.+)\/)(?<structuredPathParameter>[a-z0-9-]+)|^\/(?<singleCity>[^\/]+)\/?/gm;
+  // const regExp = /^(\/(?<structuredPathCity>[а-яА-Яa-zA-Z-]+)\/)(?<structuredPathParameter>[a-z0-9-]+)|^\/(?<singleCity>[а-яА-Яa-zA-Z-]+)\/?/gm;
   let result = [...path.matchAll(regExp)];
 
   if (result.length > 0) {

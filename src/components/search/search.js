@@ -15,6 +15,8 @@ const Search = ({submitFunc, changeFunc, searchInput, fetchSearchInputValue, fet
   onsubmit = (evt) =>{
     evt.preventDefault();
     if (searchInput){
+      searchInput = searchInput[0].toUpperCase() + searchInput.slice(1);
+      fetchSearchInputValue(searchInput);
       submitFunc(searchInput);
     }
   }

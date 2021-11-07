@@ -7,9 +7,10 @@ const initialState = {
   weatherForecasts: {
     daily: null
   },
-  city: `Барнаул`,
+  city: ``,
   searchInput: ``,
-  searchInputStatus: false
+  searchInputStatus: false,
+  cityNotFound: false
 }
 
 const reducer = (state = initialState, action) =>{
@@ -26,7 +27,8 @@ const reducer = (state = initialState, action) =>{
     case `FETCH_CITY`:
       return {
         ...state,
-        city: action.payload
+        city: action.payload.city,
+        cityNotFound: action.payload.cityNotFound
       }
     case `FETCH_SUGGESTIONS`:
       return {

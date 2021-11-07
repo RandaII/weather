@@ -11,14 +11,11 @@ import ForecastTabs from "../forecast-tabs";
 import {Route, withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
 import Suggestions from "../suggestions";
-import WeatherService from "../../services/weather-service";
+import Notification from "../notification";
 
 class App extends Component {
 
-  fetchWeatherForecast = async (city) => {
-    const forecast = await this.props.WeatherService.fetchOneCallForecast(city)
-    await this.props.fetchForecast(forecast);
-  }
+  fetchWeatherForecast = async (city) => await this.props.WeatherService.fetchOneCallForecast(city)
 
   searchFunc = async (city) => {
     const currentPath = this.props.history.location.pathname;
@@ -32,9 +29,15 @@ class App extends Component {
     document.addEventListener(`click`, this.inputFocus);
 
     if (pathCity) {
-      await this.props.fetchCity(pathCity);
-      this.fetchWeatherForecast(this.props.city);
-      return;
+      const forecast = await this.fetchWeatherForecast(pathCity);
+
+      if (forecast instanceof  Error){
+        await this.props.fetchCity({city:pathCity, cityNotFound: true});
+        return
+      }
+
+      await this.props.fetchCity({city: pathCity, cityNotFound: false});
+      await this.props.fetchForecast(forecast);
     }
   }
 
@@ -96,11 +99,18 @@ class App extends Component {
   async componentDidUpdate(prevProps, prevState) {
 
     const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
+    const {city: prevPathCity} = returnStructuredPath(prevProps.location.pathname);
 
-    if (pathCity && pathCity !== this.props.city) {
-      await this.props.fetchCity(pathCity);
-      this.fetchWeatherForecast(pathCity);
+    if (pathCity && pathCity !== prevPathCity) {
+      const forecast = await this.fetchWeatherForecast(pathCity);
+      if (forecast instanceof  Error){
+        await this.props.fetchCity({city:pathCity, cityNotFound: true});
+        return
+      }
+      await this.props.fetchCity({city: pathCity, cityNotFound: false});
+      await this.props.fetchForecast(forecast);
     }
+
     if (prevProps.searchInput !== this.props.searchInput) {
       this.returnSuggestions(this.props.searchInput);
     }
@@ -108,12 +118,12 @@ class App extends Component {
 
   render() {
 
-    const {city, weatherForecasts: {daily, current}, suggestions, searchInputStatus} = this.props;
+    const {city, weatherForecasts: {daily, current}, suggestions, searchInputStatus, cityNotFound} = this.props;
 
     let routes;
     let suggestionsBlock;
 
-    if (daily && current && city) {
+    if (daily && current && city && !cityNotFound) {
       routes = (
         <>
 
@@ -159,6 +169,15 @@ class App extends Component {
       );
     }
 
+    if (cityNotFound){
+
+      routes =  (
+        <>
+          <Notification>{`Данный город не найден`}</Notification>
+        </>
+      );
+    }
+
     if (suggestions && searchInputStatus){
       suggestionsBlock = <Suggestions suggestionsArr={suggestions}/>
     }
@@ -174,6 +193,9 @@ class App extends Component {
             );
         }}/>
         {routes}
+        <Route path={`/404`} render={() => {
+          return (<Notification>{`Нечего не найдено`}</Notification>);
+        }} exact/>
       </>
     );
   }

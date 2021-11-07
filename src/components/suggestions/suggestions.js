@@ -14,12 +14,12 @@ const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputVa
 
   suggestionsArr = suggestionsArr.map(({city, country, region_with_type}, id) =>{
 
+    let path = (parameter !== ``) ? `/${city}/${parameter}`: `/${city}/`;
+
     const clickFunc = () =>{
       fetchSearchInputStatus(false);
       fetchSearchInputValue(city);
     }
-
-    let path = (parameter !== ``) ? `/${city}/${parameter}`: `/${city}`;
 
     return (
       <NavLink className="suggestion" to={path} data-suggestion key={id} exact onClick={clickFunc}>
