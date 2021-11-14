@@ -13,8 +13,7 @@ const ForecastTabs = ({city}) =>{
           <li className="forecast-tab">
             <NavLink to={`/${city}/2-day`} exact>Завтра</NavLink></li>
           <li className="forecast-tab"><NavLink to={`/${city}/week`}>7 дней</NavLink></li>
-        </ul>
-  );
+        </ul>);
 }
 
 export default ForecastTabs;

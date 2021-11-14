@@ -1,17 +1,14 @@
 import React from "react";
-import {returnConvertedWeatherInfo} from "../../utils";
-import {WeatherImgCollections} from "../weather-card/img";
-import {NavLink} from "react-router-dom";
-import {returnTabId} from "../../utils";
+import {returnConvertedWeatherInfo, returnTabId} from "../../utils";
 import {connect} from "react-redux";
+import {NavLink} from "react-router-dom";
 
+import {WeatherImgCollections} from "../weather-card/img";
 import "./weather-tabs.scss";
 
 const WeatherTabs = ({daily, city, activeTabId}) =>{
 
-  let start;
-  let end;
-  let componentsArr = [];
+  let start, end, componentsArr = [];
 
   if (activeTabId){
 
@@ -36,14 +33,7 @@ const WeatherTabs = ({daily, city, activeTabId}) =>{
 
     const {date, temp:{day, night}, description, weatherId } = returnConvertedWeatherInfo(daily[i]);
 
-    let NavLinkPath;
-
-    if (i === 0){
-      NavLinkPath = `/${city}/`;
-    }
-    else {
-      NavLinkPath = `/${city}/${i + 1}-day`;
-    }
+    let NavLinkPath = (i === 0) ? `/${city}/` : `/${city}/${i + 1}-day`;
 
     const img = WeatherImgCollections[`id${weatherId}`];
 

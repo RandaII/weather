@@ -1,11 +1,8 @@
 import React from "react";
 import {connect} from "react-redux";
+import {returnBackground, returnConvertedWeatherInfo, returnTabId} from "../../utils";
 
 import "./weather-card.scss";
-import {
-  returnBackground,
-  returnConvertedWeatherInfo, returnTabId
-} from "../../utils";
 import {WeatherImgCollections, WeatherIcons} from "./img";
 
 const WeatherCard = ({template, weatherForecasts, city, dayId}) => {

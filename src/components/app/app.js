@@ -17,6 +17,18 @@ class App extends Component {
 
   fetchWeatherForecast = async (city) => await this.props.WeatherService.fetchOneCallForecast(city)
 
+  fetchForecastAndCity = async (city) =>{
+    const forecast = await this.fetchWeatherForecast(city);
+
+    if (forecast instanceof  Error){
+      await this.props.fetchCity({city, cityNotFound: true});
+      return
+    }
+
+    await this.props.fetchCity({city, cityNotFound: false});
+    await this.props.fetchForecast(forecast);
+  }
+
   searchFunc = async (city) => {
     const currentPath = this.props.history.location.pathname;
     const {parameter: pathRest} = returnStructuredPath(currentPath);
@@ -29,15 +41,7 @@ class App extends Component {
     document.addEventListener(`click`, this.inputFocus);
 
     if (pathCity) {
-      const forecast = await this.fetchWeatherForecast(pathCity);
-
-      if (forecast instanceof  Error){
-        await this.props.fetchCity({city:pathCity, cityNotFound: true});
-        return
-      }
-
-      await this.props.fetchCity({city: pathCity, cityNotFound: false});
-      await this.props.fetchForecast(forecast);
+      await this.fetchForecastAndCity(pathCity);
     }
   }
 
@@ -102,13 +106,7 @@ class App extends Component {
     const {city: prevPathCity} = returnStructuredPath(prevProps.location.pathname);
 
     if (pathCity && pathCity !== prevPathCity) {
-      const forecast = await this.fetchWeatherForecast(pathCity);
-      if (forecast instanceof  Error){
-        await this.props.fetchCity({city:pathCity, cityNotFound: true});
-        return
-      }
-      await this.props.fetchCity({city: pathCity, cityNotFound: false});
-      await this.props.fetchForecast(forecast);
+      await this.fetchForecastAndCity(pathCity);
     }
 
     if (prevProps.searchInput !== this.props.searchInput) {
@@ -120,33 +118,22 @@ class App extends Component {
 
     const {city, weatherForecasts: {daily, current}, suggestions, searchInputStatus, cityNotFound} = this.props;
 
-    let routes;
-    let suggestionsBlock;
+    let routes, suggestionsBlock;
 
     if (daily && current && city && !cityNotFound) {
       routes = (
         <>
+          <Route render={() =>(<ForecastTabs city={city}/>)}/>
 
-          <Route render={() => {
-            return (<ForecastTabs city={city}/>);
-          }}/>
+          <Route path={`/${city}/now`} exact
+                 render={() => (<WeatherCard template="current"/>)}/>
 
-          <Route path={`/${city}/now`} render={() =>
-            (<WeatherCard template="current"/>)
-          } exact/>
+          <Route path={`/${city}/`} exact render={({match:{params:{id}}}) =>
+             (<><WeatherTabs activeTabId={id}/>
+                <WeatherCard template="oneDay" dayId="1-day"/></>)
+          }/>
 
-
-          <Route path={`/${city}/`} render={({match}) => {
-
-            const {id} = match.params;
-
-            return (<>
-              <WeatherTabs activeTabId={id}/>
-              <WeatherCard template="oneDay" dayId="1-day"/>
-            </>);
-          }} exact/>
-
-          <Route path={`/${city}/:id`} render={({match}) => {
+          <Route path={`/${city}/:id`} exact render={({match}) => {
 
             const {id} = match.params;
 
@@ -156,26 +143,17 @@ class App extends Component {
               return;
             }
 
-            return (<>
-              <WeatherTabs activeTabId={id}/>
-              <WeatherCard template="oneDay" dayId={id}/>
-            </>);
-          }} exact/>
+            return (<><WeatherTabs activeTabId={id}/>
+                      <WeatherCard template="oneDay" dayId={id}/></>);
+          }}/>
 
-          <Route path={`/${city}/week`} render={() => {
-            return (<WeatherCard template="sevenDays"/>);
-          }} exact/>
-        </>
-      );
+          <Route path={`/${city}/week`} exact
+                 render={() => (<WeatherCard template="sevenDays"/>)}/>
+        </>);
     }
 
     if (cityNotFound){
-
-      routes =  (
-        <>
-          <Notification>{`Данный город не найден`}</Notification>
-        </>
-      );
+      routes = (<Notification>{`Данный город не найден`}</Notification>);
     }
 
     if (suggestions && searchInputStatus){
@@ -183,21 +161,11 @@ class App extends Component {
     }
 
     return (
-      <>
-        <Route path={`/`} render={() => {
-          return (
-            <>
-              <Search submitFunc={this.searchFunc} changeFunc={this.returnSuggestions}/>
-              {suggestionsBlock}
-              </>
-            );
-        }}/>
-        {routes}
-        <Route path={`/404`} render={() => {
-          return (<Notification>{`Нечего не найдено`}</Notification>);
-        }} exact/>
-      </>
-    );
+      <><Route path={`/`} render={() =>
+           (<><Search submitFunc={this.searchFunc} changeFunc={this.returnSuggestions}/>
+         {suggestionsBlock}</>)
+        }/>
+        {routes}</>);
   }
 }
 

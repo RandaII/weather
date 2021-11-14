@@ -1,12 +1,12 @@
 const returnLocalTimeMs = (seconds, timeZoneOffsetSeconds) =>{
   let date = new Date(seconds * 1000)
 
-  return (seconds * 1000) +  (date.getTimezoneOffset() * 60 * 1000) + timeZoneOffsetSeconds * 1000;
+  return (seconds * 1000) + (date.getTimezoneOffset() * 60 * 1000) + timeZoneOffsetSeconds * 1000;
 }
 
 const returnDetailedDate = (seconds, timeZoneOffsetSeconds) =>{
 
-  let date;
+  let date, weekday;
 
   if (timeZoneOffsetSeconds){
     date = new Date(returnLocalTimeMs(seconds, timeZoneOffsetSeconds));
@@ -15,84 +15,32 @@ const returnDetailedDate = (seconds, timeZoneOffsetSeconds) =>{
     date = new Date(seconds * 1000);
   }
 
-  let month;
-  let shortMonth;
-  let weekday;
-
-  switch(date.getMonth() + 1){
-    case 1:
-      shortMonth = `янв`;
-      month = `января`;
-      break;
-    case 2:
-      shortMonth = `фев`;
-      month = `февраля`;
-      break;
-    case 3:
-      shortMonth = `марта`;
-      month = `марта`;
-      break;
-    case 4:
-      shortMonth = `апр`;
-      month = `апреля`;
-      break;
-    case 5:
-      shortMonth = `мая`;
-      month = `мая`;
-      break;
-    case 6:
-      shortMonth = `июня`;
-      month = `июня`;
-      break;
-    case 7:
-      shortMonth = `июля`;
-      month = `июля`;
-      break;
-    case 8:
-      shortMonth = `авг`;
-      month = `августа`;
-      break;
-    case 9:
-      shortMonth = `сент`;
-      month = `сентября`;
-      break;
-    case 10:
-      shortMonth = `окт`;
-      month = `октября`;
-      break;
-    case 11:
-      shortMonth = `нояб`;
-      month = `ноября`;
-      break;
-    case 12:
-      shortMonth = `дек`;
-      month = `декабря`;
-      break;
+  const weekdaysTemplates = {
+    0: `воскресение`,
+    1: `понедельник`,
+    2: `вторник`,
+    3: `среда`,
+    4: `четверг`,
+    5: `пятница`,
+    6: `суббота`
+  }
+  const monthTemplates = {
+    1: {shortMonth: `янв`, month: `января`},
+    2: {shortMonth: `фев`, month: `февраля`},
+    3: {shortMonth: `марта`, month: `марта`},
+    4: {shortMonth: `апр`, month: `апреля`},
+    5: {shortMonth: `мая`, month: `мая`},
+    6: {shortMonth: `июня`, month: `июня`},
+    7: {shortMonth: `июля`, month: `июля`},
+    8: {shortMonth: `авг`, month: `августа`},
+    9: {shortMonth: `сент`, month: `сентября`},
+    10: {shortMonth: `окт`, month: `октября`},
+    11: {shortMonth: `нояб`, month: `ноября`},
+    12: {shortMonth: `дек`, month: `декабря`}
   }
 
-  switch (date.getDay()) {
-    case 0:
-      weekday = `воскресение`;
-      break;
-    case 1:
-      weekday = `понедельник`;
-      break;
-    case 2:
-      weekday = `вторник`;
-      break;
-    case 3:
-      weekday = `среда`;
-      break;
-    case 4:
-      weekday = `четверг`;
-      break;
-    case 5:
-      weekday = `пятница`;
-      break;
-    case 6:
-      weekday = `суббота`;
-      break;
-  }
+  weekday = weekdaysTemplates[+date.getDay()];
+  let {shortMonth, month} = monthTemplates[(date.getMonth() + 1)];
 
   const minutes = (date.getMinutes() < 10) ? `0` + date.getMinutes() : date.getMinutes();
   const hours = (date.getHours() < 10) ? `0` + date.getHours() : date.getHours();
@@ -206,8 +154,7 @@ const returnBackground = (id, timesOfDay) =>{
 const returnConvertedWeatherInfo = (value, timezoneOffset) =>{
   let {dt, sunrise, sunset, feels_like, temp, weather, wind_speed, wind_deg, humidity, pressure} = value;
 
-  let convertedTemp;
-  let convertedFeelingTemp;
+  let convertedTemp, convertedFeelingTemp;
 
   if (typeof temp === `object` && typeof feels_like === `object`){
     convertedTemp = {

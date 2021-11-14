@@ -16,6 +16,6 @@ export default class CityService {
     return fetch(this.url, options)
       .then(response => response.json())
       .then(result => result)
-      .catch(error => console.log("error", error));
+      .catch(error => error);
   }
 }

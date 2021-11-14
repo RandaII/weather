@@ -4,9 +4,9 @@ import {connect} from "react-redux";
 import {fetchSearchInputStatus, fetchSearchInputValue} from "../../actions";
 import {withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
+import {bindActionCreators} from "redux";
 
 import "./suggestions.scss";
-import {bindActionCreators} from "redux";
 
 const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputValue, history}) =>{
 
@@ -26,16 +26,12 @@ const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputVa
         <span className="suggestion__city" data-suggestion>{city}</span> <span className="suggestion__region" data-suggestion>{`${region_with_type}, ${country}`}</span>
       </NavLink>
     );
-  })
+  });
 
-  return (
-      <div className="suggestions" data-suggestions>{suggestionsArr}</div>
-  );
+  return (<div className="suggestions" data-suggestions>{suggestionsArr}</div>);
 }
 
-const mapStateToProps = (state) =>{
-  return {}
-}
+const mapStateToProps = (state) =>{ return {} }
 
 const mapDispatchToProps = (dispatch) =>{
   return bindActionCreators({
