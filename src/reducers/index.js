@@ -4,9 +4,7 @@ import CityService from "../services/city-service";
 const initialState = {
   WeatherService: new WeatherService(),
   CityService: new CityService(),
-  weatherForecasts: {
-    daily: null
-  },
+  weatherForecasts: {},
   city: ``,
   searchInput: ``,
   searchInputStatus: false,
@@ -20,7 +18,6 @@ const reducer = (state = initialState, action) =>{
       return {
         ...state,
         weatherForecasts: {
-          ...state.weatherForecasts,
           ...action.payload
         }
       }

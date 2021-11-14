@@ -1,19 +1,24 @@
 import React, {Component} from "react";
-import Search from "../search";
-import WeatherCard from "../weather-card";
 import {connect} from "react-redux";
-import {fetchForecast, fetchCity, fetchSuggestions, fetchSearchInputStatus} from "../../actions";
-
-import "./app.scss";
 import {bindActionCreators} from "redux";
-import WeatherTabs from "../weather-tabs";
-import ForecastTabs from "../forecast-tabs";
+import {fetchForecast, fetchCity, fetchSuggestions, fetchSearchInputStatus} from "../../actions";
 import {Route, withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
+
+import Search from "../search";
 import Suggestions from "../suggestions";
+import ForecastTabs from "../forecast-tabs";
+import WeatherTabs from "../weather-tabs";
+import WeatherCard from "../weather-card";
 import Notification from "../notification";
+import Spinner from "../spinner";
+import "./app.scss";
 
 class App extends Component {
+
+  state = {
+    loading: false
+  }
 
   fetchWeatherForecast = async (city) => await this.props.WeatherService.fetchOneCallForecast(city)
 
@@ -41,7 +46,9 @@ class App extends Component {
     document.addEventListener(`click`, this.inputFocus);
 
     if (pathCity) {
+      this.setState({loading:true});
       await this.fetchForecastAndCity(pathCity);
+      this.setState({loading:false});
     }
   }
 
@@ -106,7 +113,10 @@ class App extends Component {
     const {city: prevPathCity} = returnStructuredPath(prevProps.location.pathname);
 
     if (pathCity && pathCity !== prevPathCity) {
+      await this.props.fetchForecast({});
+      this.setState({loading:true});
       await this.fetchForecastAndCity(pathCity);
+      this.setState({loading:false});
     }
 
     if (prevProps.searchInput !== this.props.searchInput) {
@@ -117,6 +127,7 @@ class App extends Component {
   render() {
 
     const {city, weatherForecasts: {daily, current}, suggestions, searchInputStatus, cityNotFound} = this.props;
+    const {loading} = this.state;
 
     let routes, suggestionsBlock;
 
@@ -165,6 +176,7 @@ class App extends Component {
            (<><Search submitFunc={this.searchFunc} changeFunc={this.returnSuggestions}/>
          {suggestionsBlock}</>)
         }/>
+        {loading && <Spinner/>}
         {routes}</>);
   }
 }
