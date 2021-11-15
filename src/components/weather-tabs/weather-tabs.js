@@ -19,7 +19,7 @@ const WeatherTabs = ({daily, city, activeTabId}) =>{
       end = tabId + 1;
     }
 
-    else if (tabId == daily.length - 1){
+    else if (tabId === daily.length - 1){
       start = tabId - 2;
       end = tabId;
     }

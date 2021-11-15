@@ -12,12 +12,14 @@ import WeatherTabs from "../weather-tabs";
 import WeatherCard from "../weather-card";
 import Notification from "../notification";
 import Spinner from "../spinner";
+import ErrorBoundary from "../error-boundary";
 import "./app.scss";
 
 class App extends Component {
 
   state = {
-    loading: false
+    loading: false,
+    timer: null
   }
 
   fetchWeatherForecast = async (city) => await this.props.WeatherService.fetchOneCallForecast(city)
@@ -40,18 +42,6 @@ class App extends Component {
     this.props.history.push(`/${city}/${pathRest}`);
   }
 
-  async componentDidMount() {
-
-    const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
-    document.addEventListener(`click`, this.inputFocus);
-
-    if (pathCity) {
-      this.setState({loading:true});
-      await this.fetchForecastAndCity(pathCity);
-      this.setState({loading:false});
-    }
-  }
-
   returnSuggestions = async (string) => {
     string = string.toLowerCase();
     let {suggestions} = await this.props.CityService.fetchCityPrompt(string);
@@ -65,7 +55,7 @@ class App extends Component {
         return false;
       }
     }).map(({data: {city, region_with_type, country}}) => {
-       return {
+      return {
         city,
         region_with_type,
         country
@@ -107,20 +97,34 @@ class App extends Component {
     }
   }
 
+  async componentDidMount() {
+
+    const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
+    document.addEventListener(`click`, this.inputFocus);
+
+    if (pathCity) {
+      this.setState({loading:true});
+      await this.fetchForecastAndCity(pathCity);
+      this.setState({loading:false});
+    }
+  }
+
   async componentDidUpdate(prevProps, prevState) {
 
     const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
     const {city: prevPathCity} = returnStructuredPath(prevProps.location.pathname);
 
     if (pathCity && pathCity !== prevPathCity) {
-      await this.props.fetchForecast({});
       this.setState({loading:true});
       await this.fetchForecastAndCity(pathCity);
       this.setState({loading:false});
     }
 
     if (prevProps.searchInput !== this.props.searchInput) {
-      this.returnSuggestions(this.props.searchInput);
+      clearTimeout(this.state.timer);
+      this.setState({timer: setTimeout(() =>{
+          this.returnSuggestions(this.props.searchInput);
+        },250)});
     }
   }
 
@@ -131,9 +135,9 @@ class App extends Component {
 
     let routes, suggestionsBlock;
 
-    if (daily && current && city && !cityNotFound) {
+    if (daily && current && city && !cityNotFound && !loading) {
       routes = (
-        <>
+        <ErrorBoundary>
           <Route render={() =>(<ForecastTabs city={city}/>)}/>
 
           <Route path={`/${city}/now`} exact
@@ -160,7 +164,7 @@ class App extends Component {
 
           <Route path={`/${city}/week`} exact
                  render={() => (<WeatherCard template="sevenDays"/>)}/>
-        </>);
+        </ErrorBoundary>);
     }
 
     if (cityNotFound){
@@ -168,12 +172,12 @@ class App extends Component {
     }
 
     if (suggestions && searchInputStatus){
-      suggestionsBlock = <Suggestions suggestionsArr={suggestions}/>
+      suggestionsBlock = <ErrorBoundary errorEmptyComponent={true}><Suggestions suggestionsArr={suggestions}/></ErrorBoundary>
     }
 
     return (
       <><Route path={`/`} render={() =>
-           (<><Search submitFunc={this.searchFunc} changeFunc={this.returnSuggestions}/>
+           (<><Search submitFunc={this.searchFunc}/>
          {suggestionsBlock}</>)
         }/>
         {loading && <Spinner/>}

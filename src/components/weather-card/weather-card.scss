@@ -46,6 +46,7 @@
     font-weight: 300;
     text-transform: capitalize;
     margin: 0;
+    word-break: break-word;
 
     &:first-letter{
       text-transform: uppercase;

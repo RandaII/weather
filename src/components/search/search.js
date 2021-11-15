@@ -5,12 +5,9 @@ import {fetchSearchInputValue, fetchSearchInputStatus} from "../../actions";
 
 import "./search.scss";
 
-const Search = ({submitFunc, changeFunc, searchInput, fetchSearchInputValue, fetchSearchInputStatus}) =>{
+const Search = ({submitFunc, searchInput, fetchSearchInputValue, fetchSearchInputStatus}) =>{
 
-  onchange = ({target:{value}}) => {
-    fetchSearchInputValue(value)
-    changeFunc(value);
-  };
+  const onchange = ({target:{value}}) => fetchSearchInputValue(value);
 
   const onFocus = () => fetchSearchInputStatus(true);
 
