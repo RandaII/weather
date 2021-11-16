@@ -5,6 +5,7 @@ import {fetchSearchInputStatus, fetchSearchInputValue} from "../../actions";
 import {withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
 import {bindActionCreators} from "redux";
+import PropTypes from "prop-types";
 
 import "./suggestions.scss";
 
@@ -41,6 +42,17 @@ const mapDispatchToProps = (dispatch) =>{
     fetchSearchInputStatus,
     fetchSearchInputValue
   }, dispatch)
+}
+
+Suggestions.propTypes = {
+  suggestionsArr: PropTypes.arrayOf(PropTypes.shape({
+    city: PropTypes.string.isRequired,
+    country: PropTypes.string.isRequired,
+    region_with_type: PropTypes.string.isRequired,
+  })),
+  fetchSearchInputStatus: PropTypes.func.isRequired,
+  fetchSearchInputValue: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Suggestions));

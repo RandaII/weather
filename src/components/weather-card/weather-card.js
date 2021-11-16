@@ -1,6 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import {returnBackground, returnConvertedWeatherInfo, returnTabId} from "../../utils";
+import PropTypes from "prop-types";
 
 import "./weather-card.scss";
 import {WeatherImgCollections, WeatherIcons} from "./img";
@@ -183,6 +184,16 @@ const sevenDaysTemplate = (values, city, timezoneOffset) => {
 
 const mapStateToProps = ({weatherForecasts, city}) => {
   return {weatherForecasts, city};
+}
+
+WeatherCard.propTypes = {
+  template: PropTypes.string.isRequired,
+  city: PropTypes.string.isRequired,
+  dayId: PropTypes.string,
+  weatherForecasts: PropTypes.shape({
+    current: PropTypes.object.isRequired,
+    daily: PropTypes.array.isRequired
+  }).isRequired
 }
 
 export default connect(mapStateToProps)(WeatherCard);

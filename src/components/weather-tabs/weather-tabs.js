@@ -2,6 +2,7 @@ import React from "react";
 import {returnConvertedWeatherInfo, returnTabId} from "../../utils";
 import {connect} from "react-redux";
 import {NavLink} from "react-router-dom";
+import PropTypes from "prop-types";
 
 import {WeatherImgCollections} from "../weather-card/img";
 import "./weather-tabs.scss";
@@ -64,5 +65,11 @@ const WeatherTabs = ({daily, city, activeTabId}) =>{
 const mapStateToProps = ({city, weatherForecasts:{daily}}) =>{
   return{city, daily};
 }
+
+WeatherTabs.propTypes = {
+  activeTabId : PropTypes.string,
+  city : PropTypes.string.isRequired,
+  daily : PropTypes.arrayOf(PropTypes.object).isRequired
+};
 
 export default connect(mapStateToProps)(WeatherTabs);

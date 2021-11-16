@@ -4,6 +4,7 @@ import {bindActionCreators} from "redux";
 import {fetchForecast, fetchCity, fetchSuggestions, fetchSearchInputStatus} from "../../actions";
 import {Route, withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
+import PropTypes from "prop-types";
 
 import Search from "../search";
 import Suggestions from "../suggestions";
@@ -16,6 +17,25 @@ import ErrorBoundary from "../error-boundary";
 import "./app.scss";
 
 class App extends Component {
+
+  static defaultProps = {
+    CityService: PropTypes.object.isRequired,
+    WeatherService: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    fetchCity: PropTypes.func.isRequired,
+    fetchForecast: PropTypes.func.isRequired,
+    fetchSearchInputStatus: PropTypes.func.isRequired,
+    fetchSuggestions: PropTypes.func.isRequired,
+    city: PropTypes.string.isRequired,
+    cityNotFound: PropTypes.bool.isRequired ,
+    searchInput: PropTypes.string.isRequired,
+    searchInputStatus: PropTypes.bool.isRequired ,
+    weatherForecasts: PropTypes.shape({
+      current: PropTypes.object.isRequired,
+      daily: PropTypes.array.isRequired
+    }).isRequired
+  }
 
   state = {
     loading: false,

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import {NavLink} from "react-router-dom";
 
 import "./forecast-tabs.scss";
@@ -15,6 +16,10 @@ const ForecastTabs = ({city}) =>{
             <NavLink to={`/${city}/2-day`} exact>Завтра</NavLink></li>
           <li className="forecast-tab"><NavLink to={`/${city}/week`}>7 дней</NavLink></li>
         </ul>);
+}
+
+ForecastTabs.propTypes = {
+  city: PropTypes.string.isRequired
 }
 
 export default ForecastTabs;

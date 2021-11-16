@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {fetchSearchInputValue, fetchSearchInputStatus} from "../../actions";
+import PropTypes from "prop-types";
 
 import "./search.scss";
 
@@ -43,6 +44,13 @@ const mapDispatchToProps = (dispatch) =>{
     fetchSearchInputValue,
     fetchSearchInputStatus
   }, dispatch);
+}
+
+Search.propTypes = {
+  searchInput: PropTypes.string.isRequired,
+  submitFunc: PropTypes.func.isRequired,
+  fetchSearchInputValue: PropTypes.func.isRequired,
+  fetchSearchInputStatus: PropTypes.func.isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);
