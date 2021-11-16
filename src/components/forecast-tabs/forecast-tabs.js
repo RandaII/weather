@@ -3,6 +3,7 @@ import {NavLink} from "react-router-dom";
 
 import "./forecast-tabs.scss";
 
+// компонент переключатель видов прогнозов
 const ForecastTabs = ({city}) =>{
   return(
         <ul className="forecast-tabs">

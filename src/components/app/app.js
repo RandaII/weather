@@ -24,6 +24,7 @@ class App extends Component {
 
   fetchWeatherForecast = async (city) => await this.props.WeatherService.fetchOneCallForecast(city)
 
+  // отправить в store прогноз и текущий город
   fetchForecastAndCity = async (city) =>{
     const forecast = await this.fetchWeatherForecast(city);
 
@@ -36,17 +37,19 @@ class App extends Component {
     await this.props.fetchForecast(forecast);
   }
 
-  searchFunc = async (city) => {
+  searchSubmitFunc = async (city) => {
     const currentPath = this.props.history.location.pathname;
     const {parameter: pathRest} = returnStructuredPath(currentPath);
     this.props.history.push(`/${city}/${pathRest}`);
   }
 
+  // отправить в store city suggestions
   returnSuggestions = async (string) => {
     string = string.toLowerCase();
     let {suggestions} = await this.props.CityService.fetchCityPrompt(string);
 
     suggestions = suggestions.filter(({data:{city}}) => {
+      // фильтруем массив, оставляя только те города, что соответствуют строке
       if (city) {
         city = city.toLowerCase();
         if (city.includes(string)) {
@@ -55,6 +58,7 @@ class App extends Component {
         return false;
       }
     }).map(({data: {city, region_with_type, country}}) => {
+      // меняем структуру, каждого объекта
       return {
         city,
         region_with_type,
@@ -62,6 +66,7 @@ class App extends Component {
       }
     });
 
+    // исключаем повторы в результатах
     let newSuggestions = [];
     for (let i = 0; i < suggestions.length; i++) {
       if (i === 0){
@@ -84,6 +89,7 @@ class App extends Component {
       }
     }
 
+    // обрезаем массив если кол-во объектов > 10
     if (newSuggestions.length > 10){
       newSuggestions.length = 10;
     }
@@ -91,7 +97,8 @@ class App extends Component {
     await this.props.fetchSuggestions(newSuggestions);
   }
 
-  inputFocus = ({target}) =>{
+  // функция для смены статуса активности search-input
+  inputFocusFunc = ({target}) =>{
     if (!target.hasAttribute(`data-suggestion`) && !target.hasAttribute(`data-search`) && this.props.searchInputStatus){
       this.props.fetchSearchInputStatus(false);
     }
@@ -100,8 +107,9 @@ class App extends Component {
   async componentDidMount() {
 
     const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
-    document.addEventListener(`click`, this.inputFocus);
+    document.addEventListener(`click`, this.inputFocusFunc);
 
+    // если в url присутствует город, получаем прогноз и отправляем его в store
     if (pathCity) {
       this.setState({loading:true});
       await this.fetchForecastAndCity(pathCity);
@@ -109,17 +117,19 @@ class App extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps) {
 
     const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
     const {city: prevPathCity} = returnStructuredPath(prevProps.location.pathname);
 
+    // в случае изменения города в url получаем и отправляем в store обновленный прогноз
     if (pathCity && pathCity !== prevPathCity) {
       this.setState({loading:true});
       await this.fetchForecastAndCity(pathCity);
       this.setState({loading:false});
     }
 
+    // при вводе в input ставим таймер на отправку в store найденных городов
     if (prevProps.searchInput !== this.props.searchInput) {
       clearTimeout(this.state.timer);
       this.setState({timer: setTimeout(() =>{
@@ -177,7 +187,7 @@ class App extends Component {
 
     return (
       <><Route path={`/`} render={() =>
-           (<><Search submitFunc={this.searchFunc}/>
+           (<><Search submitFunc={this.searchSubmitFunc}/>
          {suggestionsBlock}</>)
         }/>
         {loading && <Spinner/>}

@@ -10,6 +10,7 @@ const WeatherTabs = ({daily, city, activeTabId}) =>{
 
   let start, end, componentsArr = [];
 
+  // в зависимости от номера активного таба, получаем нумерацию предыдущего и последующего таба
   if (activeTabId){
 
     const tabId = returnTabId(activeTabId);
@@ -29,6 +30,7 @@ const WeatherTabs = ({daily, city, activeTabId}) =>{
     end = 2;
   }
 
+  // составляем массив react элементов
   for (let i = start; i <= end; i++){
 
     const {date, temp:{day, night}, description, weatherId } = returnConvertedWeatherInfo(daily[i]);

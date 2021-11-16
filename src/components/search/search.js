@@ -7,10 +7,13 @@ import "./search.scss";
 
 const Search = ({submitFunc, searchInput, fetchSearchInputValue, fetchSearchInputStatus}) =>{
 
+  // отправляем в store значение input
   const onchange = ({target:{value}}) => fetchSearchInputValue(value);
 
+  // при фокусе input сменяем в store inputStatus
   const onFocus = () => fetchSearchInputStatus(true);
 
+  // при событии форматируем строку, отправляем в store, и меняем url в соответствии со строкой
   onsubmit = (evt) =>{
     evt.preventDefault();
     if (searchInput){

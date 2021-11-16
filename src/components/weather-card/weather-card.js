@@ -26,10 +26,13 @@ const WeatherCard = ({template, weatherForecasts, city, dayId}) => {
   return (<section className="weather-cards">{selectedTemplate}</section>)
   }
 
+// шаблон прогноза для текущей погоды
 const currentTemplate = (value, city, timezoneOffset) => {
 
+  // преобразуем данные полученные от API
   const {date, timeOfDay, sunriseTime, sunsetTime, temp, feelingTemp, description, windSpeed, windDirection, pressure, humidity, weatherId} = returnConvertedWeatherInfo(value, timezoneOffset);
 
+  // получаем путь для bgc
   const backgroundStyle = {
     backgroundImage: returnBackground(weatherId, timeOfDay)
   };
@@ -65,8 +68,10 @@ const currentTemplate = (value, city, timezoneOffset) => {
   );
 }
 
+// шаблон прогноза на день
 const oneDayTemplate = (value, city, timezoneOffset) => {
 
+  // преобразуем данные полученные от API
   const {date, temp, feelingTemp, description, weatherId, windSpeed, windDirection, humidity, pressure} = returnConvertedWeatherInfo(value, timezoneOffset);
 
   return (
@@ -144,11 +149,14 @@ const oneDayTemplate = (value, city, timezoneOffset) => {
   );
 }
 
+// шаблон прогноза на неделю
 const sevenDaysTemplate = (values, city, timezoneOffset) => {
+  // преобразуем массив прогнозов в массив react элементов
   return values.map((value, id) => {
 
     const {date, temp, description, weatherId} = returnConvertedWeatherInfo(value, timezoneOffset);
 
+    // получаем изображение из коллекции
     const img = WeatherImgCollections[`id${weatherId}`];
 
     return (

@@ -730,6 +730,7 @@ export default class WeatherService {
   currentWeatherPath = `https://api.openweathermap.org/data/2.5/weather?appid=61fdf6f7410c8d947a85a69de8f6587d`;
   weatherPath = `https://api.openweathermap.org/data/2.5/onecall?appid=61fdf6f7410c8d947a85a69de8f6587d&units=metric&lang=ru`;
 
+  // метод для получения определенного типа прогноза
   fetchForecast = async (city, forecastType) => {
     const coord = await this.fetchCityCoordinates(city);
     const path = this.weatherPath + `&lat=${coord.lat}&lon=${coord.lon}`
@@ -738,7 +739,7 @@ export default class WeatherService {
       .then((data) => data[forecastType])
       .catch((err) => err);
   }
-
+  // метод для получения множества типов прогноза
   fetchOneCallForecast = async (city) => {
     const coord = await this.fetchCityCoordinates(city);
     if (coord){
@@ -751,6 +752,7 @@ export default class WeatherService {
     return new Error('Данный город не найден');
   }
 
+  // метод для получения координат запрошенного города
   fetchCityCoordinates = async (city) => {
     return await fetch(this.currentWeatherPath + `&q=${city}`)
       .then((result) => result.json())

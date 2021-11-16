@@ -1,9 +1,11 @@
+// возвращает преобразованное время в мс в соответствии с timeZoneOffset
 const returnLocalTimeMs = (seconds, timeZoneOffsetSeconds) =>{
   let date = new Date(seconds * 1000)
 
   return (seconds * 1000) + (date.getTimezoneOffset() * 60 * 1000) + timeZoneOffsetSeconds * 1000;
 }
 
+// возвращает объект с преобразованной датой
 const returnDetailedDate = (seconds, timeZoneOffsetSeconds) =>{
 
   let date, weekday;
@@ -55,6 +57,7 @@ const returnDetailedDate = (seconds, timeZoneOffsetSeconds) =>{
   }
 }
 
+// возвращает строку с температурой, при необходимости можно задать кол-во цифр после запятой
 const returnTemperature = (number, fractionDigits) =>{
   number = (fractionDigits) ? number.toFixed(fractionDigits) : Math.round(number);
 
@@ -64,13 +67,13 @@ const returnTemperature = (number, fractionDigits) =>{
   else if(number < 0){
     return `−${String(number).slice(1)}°c`
   }
-  else {
-    return `${number}°c`
-  }
+  return `${number}°c`
 }
 
+// переводит значение давления над уровнем моря в мм рт. ст.
 const returnAtmospherePressure = (seaLevel) => Math.round(seaLevel / 1.36);
 
+// возвращает направление ветра в зависимости от градуса
 const returnWindDirection = (deg) =>{
   if ((deg >= 337.5 && deg <= 360) || (deg >= 0 && deg < 22.5) ){
     return {full: `Северный`, short: `C`};
@@ -98,8 +101,10 @@ const returnWindDirection = (deg) =>{
   }
 }
 
+// возвращает время дня в зависимости от времени восхода/заката
 const returnTimeOfDay = (currentTime, sunriseTime, sunsetTime, timeZoneOffsetSeconds) =>{
 
+  // приводим все значения к единому формату
   currentTime = returnLocalTimeMs(currentTime, timeZoneOffsetSeconds)
   sunriseTime = returnLocalTimeMs(sunriseTime, timeZoneOffsetSeconds)
   sunsetTime = returnLocalTimeMs(sunsetTime, timeZoneOffsetSeconds)
@@ -112,6 +117,7 @@ const returnTimeOfDay = (currentTime, sunriseTime, sunsetTime, timeZoneOffsetSec
   }
 }
 
+// возвращает bgc в соответствии с id погоды
 const returnBackground = (id, timesOfDay) =>{
 
   let bgcPath = ``;
@@ -151,11 +157,13 @@ const returnBackground = (id, timesOfDay) =>{
   return `url(/backgrounds/${timesOfDay}/${bgcPath[timesOfDay]})`;
 }
 
+// конвертирует полученный прогноз в необходимый для отображения вид
 const returnConvertedWeatherInfo = (value, timezoneOffset) =>{
   let {dt, sunrise, sunset, feels_like, temp, weather, wind_speed, wind_deg, humidity, pressure} = value;
 
   let convertedTemp, convertedFeelingTemp;
 
+  // в зависимости от типа прогноза, преобразуем данные необходимым образом
   if (typeof temp === `object` && typeof feels_like === `object`){
     convertedTemp = {
       morn: returnTemperature(temp.morn),
@@ -189,8 +197,10 @@ const returnConvertedWeatherInfo = (value, timezoneOffset) =>{
   }
 }
 
+// возвращает id таба
 const returnTabId = (activeTabId) => Number(activeTabId.slice(0,1)) - 1;
 
+// возвращает объект со структурно разбитым url
 const returnStructuredPath = (path) => {
   const regExp = /^(\/(?<structuredPathCity>.+)\/)(?<structuredPathParameter>[a-z0-9-]+)|^\/(?<singleCity>[^/]+)\/?/gm;
   // const regExp = /^(\/(?<structuredPathCity>[а-яА-Яa-zA-Z-]+)\/)(?<structuredPathParameter>[a-z0-9-]+)|^\/(?<singleCity>[а-яА-Яa-zA-Z-]+)\/?/gm;

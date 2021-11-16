@@ -12,10 +12,13 @@ const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputVa
 
   const {parameter} = returnStructuredPath(history.location.pathname);
 
+  // преобразуем массив городов в массив react элементов
   suggestionsArr = suggestionsArr.map(({city, country, region_with_type}, id) =>{
 
+    // в случае, если в существующем url присутствует параметр, добавляем его в link
     let path = (parameter !== ``) ? `/${city}/${parameter}`: `/${city}/`;
 
+    // по клику меняем inputStatus и отправляем значение city для search-input
     const clickFunc = () =>{
       fetchSearchInputStatus(false);
       fetchSearchInputValue(city);
@@ -31,7 +34,7 @@ const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputVa
   return (<div className="suggestions" data-suggestions>{suggestionsArr}</div>);
 }
 
-const mapStateToProps = (state) =>{ return {} }
+const mapStateToProps = () =>{ return {} }
 
 const mapDispatchToProps = (dispatch) =>{
   return bindActionCreators({
