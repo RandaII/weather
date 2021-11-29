@@ -8,7 +8,7 @@ const returnLocalTimeMs = (seconds, timeZoneOffsetSeconds) =>{
 // возвращает объект с преобразованной датой
 const returnDetailedDate = (seconds, timeZoneOffsetSeconds) =>{
 
-  let date, weekday;
+  let date;
 
   if (timeZoneOffsetSeconds){
     date = new Date(returnLocalTimeMs(seconds, timeZoneOffsetSeconds));
@@ -17,42 +17,31 @@ const returnDetailedDate = (seconds, timeZoneOffsetSeconds) =>{
     date = new Date(seconds * 1000);
   }
 
-  const weekdaysTemplates = {
-    0: `воскресение`,
-    1: `понедельник`,
-    2: `вторник`,
-    3: `среда`,
-    4: `четверг`,
-    5: `пятница`,
-    6: `суббота`
-  }
-  const monthTemplates = {
-    1: {shortMonth: `янв`, month: `января`},
-    2: {shortMonth: `фев`, month: `февраля`},
-    3: {shortMonth: `марта`, month: `марта`},
-    4: {shortMonth: `апр`, month: `апреля`},
-    5: {shortMonth: `мая`, month: `мая`},
-    6: {shortMonth: `июня`, month: `июня`},
-    7: {shortMonth: `июля`, month: `июля`},
-    8: {shortMonth: `авг`, month: `августа`},
-    9: {shortMonth: `сент`, month: `сентября`},
-    10: {shortMonth: `окт`, month: `октября`},
-    11: {shortMonth: `нояб`, month: `ноября`},
-    12: {shortMonth: `дек`, month: `декабря`}
-  }
+  const shortMonthTemplates = {
+    1: `янв`, 2: `фев`, 3: `марта`,
+    4: `апр`, 5: `мая`, 6: `июня`,
+    7: `июля`, 8: `авг`, 9: `сент`,
+    10: `окт`, 11: `нояб`, 12: `дек`
+  };
 
-  weekday = weekdaysTemplates[+date.getDay()];
-  let {shortMonth, month} = monthTemplates[(date.getMonth() + 1)];
+  const returnIntlDate = (options) => new Intl.DateTimeFormat(`ru`, options).format(date);
 
-  const minutes = (date.getMinutes() < 10) ? `0` + date.getMinutes() : date.getMinutes();
-  const hours = (date.getHours() < 10) ? `0` + date.getHours() : date.getHours();
+  // опции сформированы таким образом, чтобы месяц был в нужном падеже, а после его отделяем от дня
+  const month = returnIntlDate({
+    day: `numeric`,
+    month: "long"
+  }).match(/[а-яА-я]+$/gm).toString();
+  let shortMonth = shortMonthTemplates[(date.getMonth() + 1)];
+
+  // опция `2-digit` не работает для minute, поэтому вырезаем результат из полноценной даты
+  const minutes = returnIntlDate({hour:`2-digit`, minute:`2-digit`}).slice(3);
 
   return{
     day: date.getDate(),
     month,
     shortMonth,
-    weekday,
-    hours,
+    weekday: returnIntlDate({weekday: `long`}),
+    hours: returnIntlDate({hour: `2-digit`}),
     minutes
   }
 }

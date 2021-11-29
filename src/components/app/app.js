@@ -119,7 +119,7 @@ class App extends Component {
 
   // функция для смены статуса активности search-input
   inputFocusFunc = ({target}) =>{
-    if (!target.hasAttribute(`data-suggestion`) && !target.hasAttribute(`data-search`) && this.props.searchInputStatus){
+    if (!target.dataset.suggestion && !target.dataset.search && this.props.searchInputStatus){
       this.props.fetchSearchInputStatus(false);
     }
   }
