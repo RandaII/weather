@@ -2,47 +2,45 @@ import WeatherService from "../services/weather-service";
 import CityService from "../services/city-service";
 
 const initialState = {
-  WeatherService: new WeatherService(),
-  CityService: new CityService(),
+  fetchOneCallForecast: new WeatherService().fetchOneCallForecast,
+  fetchCityPrompt: new CityService().fetchCityPrompt,
   weatherForecasts: {},
   city: ``,
-  searchInput: ``,
-  searchInputStatus: false,
-  cityNotFound: false
+  searchInput:{
+    value:``,
+    status: false
+  },
+  cityNotFound: false,
+  suggestions:[]
 }
 
 const reducer = (state = initialState, action) =>{
   switch (action.type) {
-
+    // получение прогнозов (daily, current), города, и статуса, найден ли город
     case `FETCH_FORECAST`:
       return {
         ...state,
         weatherForecasts: {
-          ...action.payload
-        }
-      }
-    case `FETCH_CITY`:
-      return {
-        ...state,
+          ...action.payload.forecast
+        },
         city: action.payload.city,
         cityNotFound: action.payload.cityNotFound
       }
+    // получение массива поисковых предложений
     case `FETCH_SUGGESTIONS`:
       return {
         ...state,
         suggestions: action.payload
       }
-    case `FETCH_SEARCH_INPUT_VALUE`:
+    // получение информации по поисковой строке (статус и значение)
+    case `FETCH_SEARCH_INPUT`:
       return {
         ...state,
-        searchInput: action.payload
+        searchInput:{
+          ...state.searchInput,
+          ...action.payload
+        }
       }
-    case `FETCH_SEARCH_INPUT_STATUS`:
-      return {
-        ...state,
-        searchInputStatus: action.payload
-      }
-
     default:
       return state;
   }

@@ -1,5 +1,5 @@
 import React from "react";
-import {returnConvertedWeatherInfo, returnTabId} from "../../utils";
+import {returnTabId} from "../../utils";
 import {connect} from "react-redux";
 import {NavLink} from "react-router-dom";
 import PropTypes from "prop-types";
@@ -34,7 +34,7 @@ const WeatherTabs = ({daily, city, activeTabId}) =>{
   // составляем массив react элементов
   for (let i = start; i <= end; i++){
 
-    const {date, temp:{day, night}, description, weatherId } = returnConvertedWeatherInfo(daily[i]);
+    const {date, temp:{day, night}, description, weatherId } = daily[i];
 
     let NavLinkPath = (i === 0) ? `/${city}/` : `/${city}/${i + 1}-day`;
 
@@ -62,9 +62,7 @@ const WeatherTabs = ({daily, city, activeTabId}) =>{
   return (<ul className="weather-tabs">{componentsArr}</ul>);
 }
 
-const mapStateToProps = ({city, weatherForecasts:{daily}}) =>{
-  return{city, daily};
-}
+const mapStateToProps = ({city, weatherForecasts:{daily}}) =>({city, daily});
 
 WeatherTabs.propTypes = {
   activeTabId : PropTypes.string,

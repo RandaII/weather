@@ -1,12 +1,7 @@
 import React, {Component} from "react";
-import PropTypes from "prop-types";
 import Notification from "../notification";
 
 export default class ErrorBoundary extends Component {
-
-  static defaultProps = {
-    children: PropTypes.element.isRequired
-  }
 
   state = {
     hasError: false
@@ -19,7 +14,7 @@ export default class ErrorBoundary extends Component {
   render() {
 
     if (this.state.hasError) {
-      if (this.props.errorEmptyComponent) {
+      if (this.props.emptyComponent) {
         return <></>;
       }
       return <Notification>{`Что-то пошло не так`}</Notification>

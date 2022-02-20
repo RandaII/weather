@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
-import {fetchForecast, fetchCity, fetchSuggestions, fetchSearchInputStatus} from "../../actions";
+import {fetchForecast, fetchSuggestions, fetchSearchInput} from "../../actions";
 import {Route, withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
 import PropTypes from "prop-types";
@@ -18,149 +17,80 @@ import "./app.scss";
 
 class App extends Component {
 
-  static defaultProps = {
-    CityService: PropTypes.object.isRequired,
-    WeatherService: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
-    fetchCity: PropTypes.func.isRequired,
-    fetchForecast: PropTypes.func.isRequired,
-    fetchSearchInputStatus: PropTypes.func.isRequired,
-    fetchSuggestions: PropTypes.func.isRequired,
-    city: PropTypes.string.isRequired,
-    cityNotFound: PropTypes.bool.isRequired ,
-    searchInput: PropTypes.string.isRequired,
-    searchInputStatus: PropTypes.bool.isRequired ,
-    weatherForecasts: PropTypes.shape({
-      current: PropTypes.object.isRequired,
-      daily: PropTypes.array.isRequired
-    }).isRequired
-  }
-
   state = {
     loading: false,
     timer: null
-  }
+  };
 
-  fetchWeatherForecast = async (city) => await this.props.WeatherService.fetchOneCallForecast(city)
+  // данные для forecastTabs
+  forecastTabData = [
+    {id: 0, title: `Сейчас`, url: `now`},
+    {id: 1, title: `Сегодня`, url: ``},
+    {id: 2, title: `Завтра`, url: `2-day`},
+    {id: 3, title: `7 дней`, url: `week`},
+  ];
 
   // отправить в store прогноз и текущий город
-  fetchForecastAndCity = async (city) =>{
-    const forecast = await this.fetchWeatherForecast(city);
+  sendForecast = async (city) =>{
 
-    if (forecast instanceof  Error){
-      await this.props.fetchCity({city, cityNotFound: true});
-      return
-    }
+    this.setState({loading:true});
 
-    await this.props.fetchCity({city, cityNotFound: false});
-    await this.props.fetchForecast(forecast);
+    await this.props.fetchOneCallForecast(city)
+      .then((forecast) => this.props.fetchForecast({forecast, city, cityNotFound: false}))
+      .catch(() => this.props.fetchForecast({forecast:{}, city, cityNotFound: true}))
+
+    this.setState({loading:false});
   }
 
-  searchSubmitFunc = async (city) => {
+  // при нажатии send-button пушим значение в url
+  searchSubmit = async (city) => {
     const currentPath = this.props.history.location.pathname;
     const {parameter: pathRest} = returnStructuredPath(currentPath);
     this.props.history.push(`/${city}/${pathRest}`);
   }
 
   // отправить в store city suggestions
-  returnSuggestions = async (string) => {
-    string = string.toLowerCase();
-    let {suggestions} = await this.props.CityService.fetchCityPrompt(string);
-
-    suggestions = suggestions.filter(({data:{city}}) => {
-      // фильтруем массив, оставляя только те города, что соответствуют строке
-      if (city) {
-        city = city.toLowerCase();
-        if (city.includes(string)) {
-          return true
-        }
-        return false;
-      }
-    }).map(({data: {city, region_with_type, country}}) => {
-      // меняем структуру, каждого объекта
-      return {
-        city,
-        region_with_type,
-        country
-      }
-    });
-
-    // исключаем повторы в результатах
-    let newSuggestions = [];
-    for (let i = 0; i < suggestions.length; i++) {
-      if (i === 0){
-        newSuggestions.push(suggestions[i])
-      }
-      else {
-        for (let j = 0; j < newSuggestions.length; j++){
-          if (j === newSuggestions.length - 1){
-            if (suggestions[i].city !== newSuggestions[j].city){
-              newSuggestions.push(suggestions[i]);
-            }
-          }
-          else if (suggestions[i].city === newSuggestions[j].city){
-            break;
-          }
-          else {
-            continue;
-          }
-        }
-      }
-    }
-
-    // обрезаем массив если кол-во объектов > 10
-    if (newSuggestions.length > 10){
-      newSuggestions.length = 10;
-    }
-
-    await this.props.fetchSuggestions(newSuggestions);
+  sendSuggestions = async (string) => {
+    let suggestions = await this.props.fetchCityPrompt(string);
+    this.props.fetchSuggestions(suggestions);
   }
 
-  // функция для смены статуса активности search-input
-  inputFocusFunc = ({target}) =>{
-    if (!target.dataset.suggestion && !target.dataset.search && this.props.searchInputStatus){
-      this.props.fetchSearchInputStatus(false);
+  // handler для смены статуса активности search-input (при false не будет показан блок suggestions)
+  inputFocus = ({target:{dataset}}) =>{
+    if (!dataset.suggestion && !dataset.search && this.props.searchInput.status){
+      this.props.fetchSearchInput({status:false});
     }
   }
 
-  async componentDidMount() {
-
-    const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
-    document.addEventListener(`click`, this.inputFocusFunc);
+  // после монтирования проверяем url и назначаем обработчик
+  componentDidMount() {
+    const {city: pathCity} = returnStructuredPath(this.props.location.pathname);
+    document.addEventListener(`click`, this.inputFocus);
 
     // если в url присутствует город, получаем прогноз и отправляем его в store
-    if (pathCity) {
-      this.setState({loading:true});
-      await this.fetchForecastAndCity(pathCity);
-      this.setState({loading:false});
-    }
+    if (pathCity) {this.sendForecast(pathCity);}
   }
 
-  async componentDidUpdate(prevProps) {
-
-    const {city: pathCity} = returnStructuredPath(this.props.history.location.pathname);
+  componentDidUpdate(prevProps) {
+    const {city: pathCity} = returnStructuredPath(this.props.location.pathname);
     const {city: prevPathCity} = returnStructuredPath(prevProps.location.pathname);
 
     // в случае изменения города в url получаем и отправляем в store обновленный прогноз
     if (pathCity && pathCity !== prevPathCity) {
-      this.setState({loading:true});
-      await this.fetchForecastAndCity(pathCity);
-      this.setState({loading:false});
+      this.sendForecast(pathCity);
     }
 
     // при вводе в input ставим таймер на отправку в store найденных городов
-    if (prevProps.searchInput !== this.props.searchInput) {
+    if (prevProps.searchInput.value !== this.props.searchInput.value) {
       clearTimeout(this.state.timer);
-      this.setState({timer: setTimeout(() =>{
-          this.returnSuggestions(this.props.searchInput);
-        },250)});
+      this.setState({timer: setTimeout(() =>
+        this.sendSuggestions(this.props.searchInput.value),300)});
     }
   }
 
   render() {
 
-    const {city, weatherForecasts: {daily, current}, suggestions, searchInputStatus, cityNotFound} = this.props;
+    const {city, weatherForecasts: {daily, current}, suggestions, searchInput:{status: searchInputStatus}, cityNotFound} = this.props;
     const {loading} = this.state;
 
     let routes, suggestionsBlock;
@@ -168,7 +98,8 @@ class App extends Component {
     if (daily && current && city && !cityNotFound && !loading) {
       routes = (
         <ErrorBoundary>
-          <Route render={() =>(<ForecastTabs city={city}/>)}/>
+          <Route render={() =>(
+            <ForecastTabs city={city}>{this.forecastTabData}</ForecastTabs>)}/>
 
           <Route path={`/${city}/now`} exact
                  render={() => (<WeatherCard template="current"/>)}/>
@@ -198,34 +129,48 @@ class App extends Component {
     }
 
     if (cityNotFound){
-      routes = (<Notification>{`Данный город не найден`}</Notification>);
+      routes = <Notification>{`Данный город не найден`}</Notification>;
     }
 
     if (suggestions && searchInputStatus){
-      suggestionsBlock = <ErrorBoundary errorEmptyComponent={true}><Suggestions suggestionsArr={suggestions}/></ErrorBoundary>
+      suggestionsBlock = <ErrorBoundary emptyComponent={true}><Suggestions suggestionsArr={suggestions}/></ErrorBoundary>
     }
 
-    return (
-      <><Route path={`/`} render={() =>
-           (<><Search submitFunc={this.searchSubmitFunc}/>
+    return (<>
+      <Route path={`/`} render={() =>
+        (<><Search submitFunc={this.searchSubmit}/>
          {suggestionsBlock}</>)
-        }/>
-        {loading && <Spinner/>}
-        {routes}</>);
+      }/>
+      {loading && <Spinner/>}
+      {routes}</>);
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({
+App.propTypes = {
+  fetchCityPrompt: PropTypes.func.isRequired,
+  fetchOneCallForecast: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  fetchForecast: PropTypes.func.isRequired,
+  fetchSearchInput: PropTypes.func.isRequired,
+  fetchSuggestions: PropTypes.func.isRequired,
+  city: PropTypes.string.isRequired,
+  cityNotFound: PropTypes.bool.isRequired ,
+  searchInput: PropTypes.shape({
+    value: PropTypes.string.isRequired,
+    status: PropTypes.bool.isRequired
+  }).isRequired,
+  weatherForecasts: PropTypes.shape({
+    current: PropTypes.object,
+    daily: PropTypes.array
+  }).isRequired}
+
+const mapDispatchToProps ={
     fetchForecast,
-    fetchCity,
     fetchSuggestions,
-    fetchSearchInputStatus
-  }, dispatch);
+    fetchSearchInput
 }
 
-const mapStateToProps = (state) => {
-  return {...state};
-}
+const mapStateToProps = (state) => ({...state});
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

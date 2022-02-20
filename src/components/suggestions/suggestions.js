@@ -1,15 +1,14 @@
 import React from "react";
 import {NavLink} from "react-router-dom";
 import {connect} from "react-redux";
-import {fetchSearchInputStatus, fetchSearchInputValue} from "../../actions";
+import {fetchSearchInput} from "../../actions";
 import {withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
-import {bindActionCreators} from "redux";
 import PropTypes from "prop-types";
 
 import "./suggestions.scss";
 
-const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputValue, history}) =>{
+const Suggestions = ({suggestionsArr, fetchSearchInput, history}) =>{
 
   const {parameter} = returnStructuredPath(history.location.pathname);
 
@@ -21,8 +20,7 @@ const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputVa
 
     // по клику меняем inputStatus и отправляем значение city для search-input
     const clickFunc = () =>{
-      fetchSearchInputStatus(false);
-      fetchSearchInputValue(city);
+      fetchSearchInput({status: false, value: city});
     }
 
     return (
@@ -35,14 +33,9 @@ const Suggestions = ({suggestionsArr, fetchSearchInputStatus, fetchSearchInputVa
   return (<div className="suggestions" data-suggestions>{suggestionsArr}</div>);
 }
 
-const mapStateToProps = () =>{ return {} }
+const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch) =>{
-  return bindActionCreators({
-    fetchSearchInputStatus,
-    fetchSearchInputValue
-  }, dispatch)
-}
+const mapDispatchToProps = {fetchSearchInput}
 
 Suggestions.propTypes = {
   suggestionsArr: PropTypes.arrayOf(PropTypes.shape({
@@ -50,8 +43,7 @@ Suggestions.propTypes = {
     country: PropTypes.string.isRequired,
     region_with_type: PropTypes.string.isRequired,
   })),
-  fetchSearchInputStatus: PropTypes.func.isRequired,
-  fetchSearchInputValue: PropTypes.func.isRequired,
+  fetchSearchInput: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired
 }
 

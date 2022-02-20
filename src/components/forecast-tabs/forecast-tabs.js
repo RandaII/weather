@@ -4,22 +4,17 @@ import {NavLink} from "react-router-dom";
 
 import "./forecast-tabs.scss";
 
-// компонент переключатель видов прогнозов
-const ForecastTabs = ({city}) =>{
-  return(
-        <ul className="forecast-tabs">
-          <li className="forecast-tab">
-            <NavLink to={`/${city}/now`} exact>Сейчас</NavLink></li>
-          <li className="forecast-tab">
-            <NavLink to={`/${city}/`} exact>Сегодня</NavLink></li>
-          <li className="forecast-tab">
-            <NavLink to={`/${city}/2-day`} exact>Завтра</NavLink></li>
-          <li className="forecast-tab"><NavLink to={`/${city}/week`}>7 дней</NavLink></li>
-        </ul>);
-}
+// компонент переключатель видов прогноза
+const ForecastTabs = ({city, children}) =>(
+  <ul className="forecast-tabs">
+    {children.map(({id, title, url}) =>
+      <li className="forecast-tab" key={id}><NavLink to={`/${city}/${url}`} exact>{title}</NavLink></li>
+    )}
+  </ul>);
 
 ForecastTabs.propTypes = {
-  city: PropTypes.string.isRequired
+  city: PropTypes.string.isRequired,
+  children: PropTypes.arrayOf(PropTypes.object).isRequired
 }
 
 export default ForecastTabs;
