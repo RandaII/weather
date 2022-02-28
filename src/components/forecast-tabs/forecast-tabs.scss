@@ -61,3 +61,21 @@
     outline: none;
   }
 }
+
+@media screen and (max-width: 500px){
+  .forecast-tab {
+    a{
+      font-size: 18px;
+      width: 85px;
+    }
+  }
+}
+
+@media screen and (max-width: 360px){
+  .forecast-tab {
+    a{
+      font-size: 14px;
+      width: 65px;
+    }
+  }
+}

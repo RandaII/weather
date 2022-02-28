@@ -96,7 +96,8 @@
 
 .weather-card--extended{
   font-family: $mainFont;
-  width: auto;
+  max-width: 485px;
+  width: 100%;
   height: auto;
   color: $mainFontColor;
   background-color: #fff;
@@ -284,6 +285,68 @@
     }
     &.pressure{
       mask-image: url("./img/icons/pressure.svg");
+    }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .weather-card--extended{
+    &__city{
+      font-size: 24px;
+    }
+    &__date, &__fact{
+      font-size: 16px;
+    }
+    &__time-of-day, &__temperature{
+      font-size: 22px;
+    }
+  }
+  .weather-card--current{
+    &__city{
+      font-size: 28px;
+    }
+    &__temperature{
+      font-size: 40px;
+    }
+    &__sunrise, &__sunset, &__feeling, &__description{
+      font-size: 18px;
+    }
+    &__fact{
+      span{
+        font-size: 16px;
+        margin-left: 5px;
+      }
+    }
+    &__icon{
+      height: 25px;
+      width: 25px;
+    }
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .weather-card--extended{
+    min-width: 200px;
+
+    &__row:first-child{
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    &__date{
+      width: 100%;
+      margin-left: 0;
+      text-align: center;
+    }
+  }
+  .weather-card--current{
+    &__row{
+      flex-wrap: wrap;
+    }
+    &__row > *{
+      width: 200px;
+      justify-content: center;
+      text-align: center;
+      margin-top: 5px;
     }
   }
 }

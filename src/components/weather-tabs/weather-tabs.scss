@@ -48,6 +48,7 @@
 
   &__wrap{
     max-width: 185px;
+    flex: 1 1 120px;
     width: 100%;
     margin-right: 20px;
   }
@@ -67,5 +68,59 @@
   &__icon{
     height: 55px;
     width: auto;
+  }
+}
+
+@media screen and (max-width: 660px) {
+  .weather-tab{
+    & .weather-tab__date {
+      font-size: 18px;
+    }
+    & .weather-tab__temperature {
+      font-size: 22px;
+      line-height: 35px;
+    }
+    &__icon{
+      height: 40px;
+    }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .weather-tab{
+    & .weather-tab__date {
+      font-size: 16px;
+    }
+    & .weather-tab__temperature {
+      font-size: 18px;
+      line-height: 30px;
+    }
+    &__icon{
+      height: 30px;
+    }
+    &__wrap{
+      margin-right: 10px;
+    }
+  }
+}
+@media screen and (max-width: 360px) {
+
+  .weather-tabs{align-items: stretch;}
+  .weather-tab{
+    height: 100%;
+    & .weather-tab__date {
+      display: block;
+      font-size: 14px;
+    }
+    & .weather-tab__temperature {
+      font-size: 18px;
+      margin: 0;
+    }
+    &__icon{
+      display: none;
+    }
+    &__wrap{
+      margin-right: 10px;
+    }
   }
 }
