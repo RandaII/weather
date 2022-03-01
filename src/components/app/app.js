@@ -42,7 +42,7 @@ class App extends Component {
     this.setState({loading:false});
   }
 
-  // при нажатии send-button пушим значение в url
+  // при submit пушим значение в url
   searchSubmit = async (city) => {
     const currentPath = this.props.history.location.pathname;
     const {parameter: pathRest} = returnStructuredPath(currentPath);

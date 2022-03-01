@@ -1,9 +1,8 @@
 
 export default class WeatherService {
 
-  #сoordinatesPath = `https://api.openweathermap.org/data/2.5/weather?appid=61fdf6f7410c8d947a85a69de8f6587d`;
+  #coordinatesPath = `https://api.openweathermap.org/data/2.5/weather?appid=61fdf6f7410c8d947a85a69de8f6587d`;
   #weatherPath = `https://api.openweathermap.org/data/2.5/onecall?appid=61fdf6f7410c8d947a85a69de8f6587d&units=metric&lang=ru&exclude=minutely,hourly,alerts`;
-
 
   convertForecast = new class {
 
@@ -175,7 +174,7 @@ export default class WeatherService {
 
   // метод для получения координат запрошенного города
   fetchCityCoordinates = (city) => (
-    fetch(this.#сoordinatesPath + `&q=${city}`)
+    fetch(this.#coordinatesPath + `&q=${city}`)
       .then((result) => result.json())
       .then((data) => data.coord)
       .catch((err) => err));
