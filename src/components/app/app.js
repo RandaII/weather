@@ -47,6 +47,7 @@ class App extends Component {
     const currentPath = this.props.history.location.pathname;
     const {parameter: pathRest} = returnStructuredPath(currentPath);
     this.props.history.push(`/${city}/${pathRest}`);
+    this.props.fetchSearchInput({status:false});
   }
 
   // отправить в store city suggestions
@@ -56,16 +57,23 @@ class App extends Component {
   }
 
   // handler для смены статуса активности search-input (при false не будет показан блок suggestions)
-  inputFocus = ({target:{dataset}}) =>{
+  suggestionsStatusHandler = ({target:{dataset}}) =>{
     if (!dataset.suggestion && !dataset.search && this.props.searchInput.status){
       this.props.fetchSearchInput({status:false});
+    }
+  }
+
+  // при управлении с клавиатуры, также, в нужный момент скрываем блок suggestions
+  keyHandler = (evt) =>{
+    if (evt.key === `Tab`){
+      this.suggestionsStatusHandler(evt);
     }
   }
 
   // после монтирования проверяем url и назначаем обработчик
   componentDidMount() {
     const {city: pathCity} = returnStructuredPath(this.props.location.pathname);
-    document.addEventListener(`click`, this.inputFocus);
+    document.addEventListener(`click`, this.suggestionsStatusHandler);
 
     // если в url присутствует город, получаем прогноз и отправляем его в store
     if (pathCity) {this.sendForecast(pathCity);}
@@ -136,13 +144,15 @@ class App extends Component {
       suggestionsBlock = <ErrorBoundary emptyComponent={true}><Suggestions suggestionsArr={suggestions}/></ErrorBoundary>
     }
 
-    return (<>
-      <Route path={`/`} render={() =>
-        (<><Search submitFunc={this.searchSubmit}/>
-         {suggestionsBlock}</>)
-      }/>
-      {loading && <Spinner/>}
-      {routes}</>);
+    return (
+      <div id="app" onKeyUp={this.keyHandler}>
+        <Route path={`/`} render={() =>
+          (<><Search submitFunc={this.searchSubmit}/>
+           {suggestionsBlock}</>)
+        }/>
+        {loading && <Spinner/>}
+        {routes}
+      </div>);
   }
 }
 
