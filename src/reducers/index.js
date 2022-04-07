@@ -1,10 +1,7 @@
-import WeatherService from "../services/weather-service";
-import CityService from "../services/city-service";
 
 const initialState = {
-  fetchOneCallForecast: new WeatherService().fetchOneCallForecast,
-  fetchCityPrompt: new CityService().fetchCityPrompt,
   weatherForecasts: {},
+  isLoading: false,
   city: ``,
   searchInput:{
     value:``,
@@ -16,8 +13,15 @@ const initialState = {
 
 const reducer = (state = initialState, action) =>{
   switch (action.type) {
+
+    case `SET_LOADING_STATUS`:
+      return {
+        ...state,
+        isLoading: action.payload
+      }
+
     // получение прогнозов (daily, current), города, и статуса, найден ли город
-    case `FETCH_FORECAST`:
+    case `SET_FORECAST`:
       return {
         ...state,
         weatherForecasts: {

@@ -1,5 +1,6 @@
-import {createStore} from "redux"
+import {applyMiddleware, createStore} from "redux"
 import reducer from "./reducers";
+import thunk from "redux-thunk";
 
 // const middleware = () => (next) => (action) =>{
 //   console.log(action.type);
@@ -7,7 +8,7 @@ import reducer from "./reducers";
 //   return next(action);
 // }
 
-const store = createStore(reducer);
+const store = createStore(reducer, applyMiddleware(thunk));
 
 
 

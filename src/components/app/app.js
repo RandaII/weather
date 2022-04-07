@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {fetchForecast, fetchSuggestions, fetchSearchInput} from "../../actions";
+import {fetchSuggestions, fetchSearchInput, fetchForecast} from "../../actions";
 import {Route, withRouter} from "react-router-dom";
 import {returnStructuredPath} from "../../utils";
 import PropTypes from "prop-types";
@@ -18,7 +18,6 @@ import "./app.scss";
 class App extends Component {
 
   state = {
-    loading: false,
     timer: null
   };
 
@@ -30,30 +29,12 @@ class App extends Component {
     {id: 3, title: `7 дней`, url: `week`},
   ];
 
-  // отправить в store прогноз и текущий город
-  sendForecast = async (city) =>{
-
-    this.setState({loading:true});
-
-    await this.props.fetchOneCallForecast(city)
-      .then((forecast) => this.props.fetchForecast({forecast, city, cityNotFound: false}))
-      .catch(() => this.props.fetchForecast({forecast:{}, city, cityNotFound: true}))
-
-    this.setState({loading:false});
-  }
-
   // при submit пушим значение в url
   searchSubmit = async (city) => {
     const currentPath = this.props.history.location.pathname;
     const {parameter: pathRest} = returnStructuredPath(currentPath);
     this.props.history.push(`/${city}/${pathRest}`);
     this.props.fetchSearchInput({status:false});
-  }
-
-  // отправить в store city suggestions
-  sendSuggestions = async (string) => {
-    let suggestions = await this.props.fetchCityPrompt(string);
-    this.props.fetchSuggestions(suggestions);
   }
 
   // handler для смены статуса активности search-input (при false не будет показан блок suggestions)
@@ -76,7 +57,7 @@ class App extends Component {
     document.addEventListener(`click`, this.suggestionsStatusHandler);
 
     // если в url присутствует город, получаем прогноз и отправляем его в store
-    if (pathCity) {this.sendForecast(pathCity);}
+    if (pathCity) {this.props.fetchForecast(pathCity);}
   }
 
   componentDidUpdate(prevProps) {
@@ -85,25 +66,24 @@ class App extends Component {
 
     // в случае изменения города в url получаем и отправляем в store обновленный прогноз
     if (pathCity && pathCity !== prevPathCity) {
-      this.sendForecast(pathCity);
+      this.props.fetchForecast(pathCity);
     }
 
     // при вводе в input ставим таймер на отправку в store найденных городов
     if (prevProps.searchInput.value !== this.props.searchInput.value) {
       clearTimeout(this.state.timer);
       this.setState({timer: setTimeout(() =>
-        this.sendSuggestions(this.props.searchInput.value),300)});
+        this.props.fetchSuggestions(this.props.searchInput.value),300)});
     }
   }
 
   render() {
 
-    const {city, weatherForecasts: {daily, current}, suggestions, searchInput:{status: searchInputStatus}, cityNotFound} = this.props;
-    const {loading} = this.state;
+    const {city, weatherForecasts: {daily, current}, suggestions, searchInput:{status: searchInputStatus}, cityNotFound, isLoading} = this.props;
 
     let routes, suggestionsBlock;
 
-    if (daily && current && city && !cityNotFound && !loading) {
+    if (daily && current && city && !cityNotFound && !isLoading) {
       routes = (
         <ErrorBoundary>
           <Route render={() =>(
@@ -150,21 +130,20 @@ class App extends Component {
           (<><Search submitFunc={this.searchSubmit}/>
            {suggestionsBlock}</>)
         }/>
-        {loading && <Spinner/>}
+        {isLoading && <Spinner/>}
         {routes}
       </div>);
   }
 }
 
 App.propTypes = {
-  fetchCityPrompt: PropTypes.func.isRequired,
-  fetchOneCallForecast: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   fetchForecast: PropTypes.func.isRequired,
   fetchSearchInput: PropTypes.func.isRequired,
   fetchSuggestions: PropTypes.func.isRequired,
   city: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   cityNotFound: PropTypes.bool.isRequired ,
   searchInput: PropTypes.shape({
     value: PropTypes.string.isRequired,
@@ -176,9 +155,9 @@ App.propTypes = {
   }).isRequired}
 
 const mapDispatchToProps ={
-    fetchForecast,
     fetchSuggestions,
-    fetchSearchInput
+    fetchSearchInput,
+    fetchForecast
 }
 
 const mapStateToProps = (state) => ({...state});
